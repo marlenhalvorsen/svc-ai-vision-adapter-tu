@@ -1,0 +1,6 @@
+@svc_ai_vision_adapter_HostAddress = http://localhost:5117
+
+GET {{svc_ai_vision_adapter_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
