@@ -1,11 +1,28 @@
+using svc_ai_vision_adapter.Application.Interfaces;
+using svc_ai_vision_adapter.Application.Services;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
+using svc_ai_vision_adapter.Infrastructure.Composition;
+using svc_ai_vision_adapter.Infrastructure.Http;
+using svc_ai_vision_adapter.Infrastructure.Options;
+
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
+builder.Services.Configure<RecognitionOptions>(builder.Configuration.GetSection("Recognition"));
+
+//Dependency Injection
+builder.Services.AddScoped<IRecognitionService, RecognitionService>();
+builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
+builder.Services.AddTransient<GoogleVisionAnalyzer>();
+builder.Services.AddSingleton<IAnalyzerFactory, AnalyzerFactory>();
 
 var app = builder.Build();
 
@@ -17,8 +34,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 
