@@ -13,7 +13,7 @@ namespace svc_ai_vision_adapter.Application.Contracts
     /// <summary> 
     /// Describes what provider was used to be transparent and audit without exposing SDK-details.
     /// </summary>
-    public record AIProviderDto(string name, string ApiVersion, string? Region, IReadOnlyList<string> Featureset, object? Conifg);
+    public record AIProviderDto(string Name, string ApiVersion, string? Region, IReadOnlyList<string> Featureset, object? Conifg);
     /// <summary>
     /// provides visibility that can be used for performance monitoring and troubleshooting
     /// </summary>

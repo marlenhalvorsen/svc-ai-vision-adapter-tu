@@ -23,6 +23,8 @@ builder.Services.AddScoped<IRecognitionService, RecognitionService>();
 builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
 builder.Services.AddTransient<GoogleVisionAnalyzer>();
 builder.Services.AddSingleton<IAnalyzerFactory, AnalyzerFactory>();
+builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
+    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
 var app = builder.Build();
 

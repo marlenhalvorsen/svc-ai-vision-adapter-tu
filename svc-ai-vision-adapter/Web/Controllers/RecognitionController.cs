@@ -6,7 +6,7 @@ namespace svc_ai_vision_adapter.Web.Controllers
 {
     [ApiController]
     [Route("analyze")]
-    public class recognitionController(IRecognitionService service) : ControllerBase
+    public class RecognitionController(IRecognitionService service) : ControllerBase
     {
         [HttpPost]
         public async Task<ActionResult<RecognitionResponseDto>> Analyze([FromBody] RecognitionRequestDto req, CancellationToken ct)
