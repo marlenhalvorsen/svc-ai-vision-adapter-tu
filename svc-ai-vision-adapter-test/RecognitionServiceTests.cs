@@ -7,6 +7,7 @@ using Xunit;
 
 public class RecognitionServiceTests
 {
+    // ARRANGE
     // Tiny factory that always returns the same analyzer
     private sealed class TestFactory(IImageAnalyzer a) : IAnalyzerFactory
     { public IImageAnalyzer Resolve(string? _) => a; }
