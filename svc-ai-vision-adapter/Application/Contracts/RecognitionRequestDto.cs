@@ -9,6 +9,6 @@
         string? sessionId,
         List<ImageRefDto> Images,
         List<string>? Features,
-        string? Provider //what AI engine is going to be used
+        string? Provider //what AI engine is going to be used, atm GoogleVisionCloud
     );
 }

@@ -18,7 +18,11 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
             _recognitionOptions = opt.Value;
             _imageAnnotatorClient = ImageAnnotatorClient.Create();
         }
-        public async Task<(AIProviderDto provider, InvocationMetricsDto invocationMetrics, IReadOnlyList<ProviderResultDto> results)> AnalyzeAsync(
+        public sealed record AnalysisResult(
+            AIProviderDto Provider,
+            InvocationMetricsDto InvocationMetrics,
+            IReadOnlyList<ProviderResultDto> Results);
+        public async Task<AnalysisResult> AnalyzeAsync(
             IReadOnlyList<(ImageRefDto Ref, byte[] Bytes)> images, IReadOnlyList<string> features, CancellationToken ct = default)
         {
             var batch = new BatchAnnotateImagesRequest();
