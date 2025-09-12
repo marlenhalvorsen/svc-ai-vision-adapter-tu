@@ -7,9 +7,7 @@ namespace svc_ai_vision_adapter.Application.Interfaces
     /// </summary>
     public interface IImageAnalyzer
     {
-        Task<(AIProviderDto provider,
-              InvocationMetricsDto invocationMetrics,
-              IReadOnlyList<ProviderResultDto> results)>
+        Task<RecognitionAnalysisResult>
         AnalyzeAsync(
             IReadOnlyList<(ImageRefDto Ref, byte[] Bytes)> images,
             IReadOnlyList<string> features,

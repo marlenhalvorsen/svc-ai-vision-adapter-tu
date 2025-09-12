@@ -51,9 +51,9 @@ namespace svc_ai_vision_adapter.Application.Services
             var analyzer = _factory.Resolve(req.Provider);
             var images = await Task.WhenAll(req.Images.Select(i => _fetcher.FetchAsync(i, ct)));
             var result = await analyzer.AnalyzeAsync(images, features, ct);
-            var ai = result.provider;
-            var metrics = result.invocationMetrics;
-            var results = result.results;
+            var ai = result.Provider;
+            var metrics = result.InvocationMetrics;
+            var results = result.Results;
             
             return new RecognitionResponseDto(req.sessionId, ai, metrics, results.ToList());
         }

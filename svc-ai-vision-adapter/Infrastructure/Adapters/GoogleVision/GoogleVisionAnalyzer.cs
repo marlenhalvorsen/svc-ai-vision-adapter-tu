@@ -18,11 +18,8 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
             _recognitionOptions = opt.Value;
             _imageAnnotatorClient = ImageAnnotatorClient.Create();
         }
-        public sealed record AnalysisResult(
-            AIProviderDto Provider,
-            InvocationMetricsDto InvocationMetrics,
-            IReadOnlyList<ProviderResultDto> Results);
-        public async Task<AnalysisResult> AnalyzeAsync(
+
+        public async Task<RecognitionAnalysisResult> AnalyzeAsync(
             IReadOnlyList<(ImageRefDto Ref, byte[] Bytes)> images, IReadOnlyList<string> features, CancellationToken ct = default)
         {
             var batch = new BatchAnnotateImagesRequest();
@@ -38,9 +35,9 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
                 batch.Requests.Add(req);
             }
 
-            var t0 = DateTime.UtcNow;
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var resp = await _imageAnnotatorClient.BatchAnnotateImagesAsync(batch, ct);
-            var latency = (int)(DateTime.UtcNow - t0).TotalMilliseconds;
+            var latency = (int)sw.Elapsed.TotalMilliseconds;
 
             var jsonFmt = JsonFormatter.Default;
             var results = new List<ProviderResultDto>();
@@ -53,7 +50,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
             var ai = new AIProviderDto("vision", "v1", _recognitionOptions.Region, features, new { _recognitionOptions.MaxResults });
             var metrics = new InvocationMetricsDto(latency, images.Count, ProviderRequestId: null);
 
-            return (ai, metrics, results); 
+            return new RecognitionAnalysisResult(ai, metrics, results); 
         }
     }
 }
