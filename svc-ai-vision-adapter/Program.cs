@@ -29,6 +29,7 @@ builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddSingleton<IResultShaper, GoogleResultShaper>(); 
 builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();
+builder.Services.AddSingleton<IResultAggregator, ResultAggregator>();
 
 
 var app = builder.Build();

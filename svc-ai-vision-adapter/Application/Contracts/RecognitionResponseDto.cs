@@ -13,7 +13,7 @@ namespace svc_ai_vision_adapter.Application.Contracts
     /// <summary> 
     /// Describes what provider was used to be transparent and audit without exposing SDK-details.
     /// </summary>
-    public sealed record AIProviderDto(string Name, string ApiVersion, string? Region, IReadOnlyList<string> Featureset, object? Conifg);
+    public sealed record AIProviderDto(string Name, string ApiVersion, string? Region, IReadOnlyList<string> Featureset, object? Config);
     /// <summary>
     /// provides visibility that can be used for performance monitoring and troubleshooting
     /// </summary>
@@ -44,6 +44,13 @@ namespace svc_ai_vision_adapter.Application.Contracts
         string Name,
         double Score
     );
+    public sealed record MachineAggregateDto(
+        string? Brand,
+        string? Type,
+        string? Model,
+        double Confidence,
+        bool IsConfident
+    );
 
     public sealed record ShapedResultDto(
         ImageRefDto ImageRef,
@@ -56,7 +63,7 @@ namespace svc_ai_vision_adapter.Application.Contracts
         AIProviderDto Ai,
         InvocationMetricsDto Metrics,
         List<ProviderResultDto> Results,
-        List<ShapedResultDto>? Compact = null   // <- NY tilføjet
-
+        List<ShapedResultDto>? Compact = null,
+        MachineAggregateDto? Aggregate = null
         );
 }

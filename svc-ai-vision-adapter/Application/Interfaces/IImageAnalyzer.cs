@@ -14,7 +14,7 @@ namespace svc_ai_vision_adapter.Application.Interfaces
             CancellationToken ct = default); //CT impemented to be able to cancel operation if not needed anymore. 
     }
 
-    public sealed record NormamlizedResult(
+    public sealed record NormalizedResult(
         ImageRefDto ImageRef,
         IReadOnlyList<string> Labels,
         string? Logo, 

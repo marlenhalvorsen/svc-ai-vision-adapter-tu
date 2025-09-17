@@ -1,7 +1,9 @@
 ﻿using System.Text.Json;
+using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Interfaces;
 using svc_ai_vision_adapter.Application.Services;
+using svc_ai_vision_adapter.Infrastructure.Options;
 using FluentAssertions;
 using Xunit;
 
@@ -12,33 +14,41 @@ public class RecognitionServiceTests
     private sealed class TestFactory(IImageAnalyzer a) : IAnalyzerFactory
     { public IImageAnalyzer Resolve(string? _) => a; }
 
-    // Fake analyzer that records what it got
+    // Fake analyzer that records what it got 
     private sealed class FakeAnalyzer : IImageAnalyzer
     {
         public IReadOnlyList<string>? ReceivedFeatures { get; private set; }
 
-        // >>> Match interfacets præcise tuple-navne: provider, invocationMetrics, results
-        public Task<(AIProviderDto provider, InvocationMetricsDto invocationMetrics, IReadOnlyList<ProviderResultDto> results)>
-            AnalyzeAsync(
-                IReadOnlyList<(ImageRefDto Ref, byte[] Bytes)> images,
-                IReadOnlyList<string> features,
-                CancellationToken ct = default)
+        public Task<RecognitionAnalysisResult> AnalyzeAsync(
+            IReadOnlyList<(ImageRefDto Ref, byte[] Bytes)> images,
+            IReadOnlyList<string> features,
+            CancellationToken ct = default)
         {
             ReceivedFeatures = features.ToList();
 
-            var results = images
+            var rawResults = images
                 .Select(i => new ProviderResultDto(i.Ref, JsonDocument.Parse("""{"ok":true}""").RootElement))
                 .ToList();
 
             var provider = new AIProviderDto("fake", "v1", null, features, new { });
             var invocationMetrics = new InvocationMetricsDto(10, images.Count, null);
 
-            // Navngiv return-tuple elementerne eksplicit, så de matcher interfacet
-            return Task.FromResult(
-                (provider: provider,
-                 invocationMetrics: invocationMetrics,
-                 results: (IReadOnlyList<ProviderResultDto>)results)
-            );
+            // Normaliseret resultat – indholdet er ikke vigtigt for denne test
+            var normalized = images
+                .Select(i => new NormalizedResult(
+                    i.Ref,
+                    Labels: new[] { "ok" },
+                    Logo: null,
+                    OcrText: null,
+                    Objects: Array.Empty<(string, double)>(),
+                    WebBestGuess: null))
+                .ToList();
+
+            return Task.FromResult(new RecognitionAnalysisResult(
+                Provider: provider,
+                InvocationMetrics: invocationMetrics,
+                Results: rawResults
+            ));
         }
     }
 
@@ -53,8 +63,13 @@ public class RecognitionServiceTests
     {
         var analyzer = new FakeAnalyzer();
 
-        // Brug interfacet, hvis RecognitionService implementerer AnalyzeAsync eksplicit
-        IRecognitionService svc = new RecognitionService(new TestFactory(analyzer), new FakeFetcher());
+        // Service kræver IOptions<RecognitionOptions>; giv ingen features => brug defaults
+        var opts = Options.Create(new RecognitionOptions
+        {
+            Features = null // eller: new List<string>()
+        });
+
+        IRecognitionService svc = new RecognitionService(new TestFactory(analyzer), new FakeFetcher(), opts);
 
         var req = new RecognitionRequestDto(
             "s1",
@@ -65,7 +80,9 @@ public class RecognitionServiceTests
 
         var resp = await svc.AnalyzeAsync(req, CancellationToken.None);
 
-        analyzer.ReceivedFeatures.Should().BeEquivalentTo(new[] { "LABEL_DETECTION", "LOGO_DETECTION" });
+        // Service bruger camelCase defaults
+        analyzer.ReceivedFeatures.Should().BeEquivalentTo(new[] { "LabelDetection", "LogoDetection" });
+
         resp.Results.Should().HaveCount(1);
         resp.Ai.Name.Should().Be("fake");
     }
