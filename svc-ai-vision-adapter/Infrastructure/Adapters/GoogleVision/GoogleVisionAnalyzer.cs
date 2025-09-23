@@ -12,17 +12,15 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 {
     internal sealed class GoogleVisionAnalyzer : IImageAnalyzer
     {
-        private readonly  ImageAnnotatorClient _imageAnnotatorClient;
+        private readonly ImageAnnotatorClient _imageAnnotatorClient;
         private readonly RecognitionOptions _recognitionOptions;
-        private readonly IResultShaper _googleResultShaper;
-        private readonly IResultAggregator _resultAggregator;
 
-        public GoogleVisionAnalyzer(IOptions<RecognitionOptions> opt, IResultShaper shaper, IResultAggregator aggregator)
+
+        public GoogleVisionAnalyzer(IOptions<RecognitionOptions> opt)
         {
             _recognitionOptions = opt.Value;
             _imageAnnotatorClient = ImageAnnotatorClient.Create();
-            _googleResultShaper = shaper;
-            _resultAggregator = aggregator;
+
 
         }
 
@@ -54,29 +52,26 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
                 results.Add(new ProviderResultDto(images[i].Ref, raw));
             }
 
-            var compact = results.Select(_googleResultShaper.Shape).ToList();
-            var aggregate = _resultAggregator.Aggregate(compact);
 
-                var ai = new AIProviderDto(
-               Name: "vision",
-               ApiVersion: "v1",
-               Region: _recognitionOptions.Region,
-               Featureset: features.ToList(),
-               Config: new { MaxResults = _recognitionOptions.MaxResults }
-           );
 
-                var metrics = new InvocationMetricsDto(
-                LatencyMs: latency,
-                ImageCount: images.Count,
-                ProviderRequestId: null
-            );
+            var ai = new AIProviderDto(
+           Name: "vision",
+           ApiVersion: "v1",
+           Region: _recognitionOptions.Region,
+           Featureset: features.ToList(),
+           Config: new { MaxResults = _recognitionOptions.MaxResults }
+       );
+
+            var metrics = new InvocationMetricsDto(
+            LatencyMs: latency,
+            ImageCount: images.Count,
+            ProviderRequestId: null
+        );
             return new RecognitionAnalysisResult
             {
                 Provider = ai,
                 InvocationMetrics = metrics,
                 Results = _recognitionOptions.IncludeRaw ? results : Array.Empty<ProviderResultDto>(),
-                Compact = compact,
-                Aggregate = aggregate
             };
         }
     }

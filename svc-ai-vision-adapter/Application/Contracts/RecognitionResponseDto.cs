@@ -49,8 +49,12 @@ namespace svc_ai_vision_adapter.Application.Contracts
         string? Type,
         string? Model,
         double Confidence,
-        bool IsConfident
-    );
+        bool IsConfident)
+    {
+        public string Name => string.Join(' ', new[] { Brand, Model }
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => s.Trim()));
+    }
 
     public sealed record ShapedResultDto(
         ImageRefDto ImageRef,

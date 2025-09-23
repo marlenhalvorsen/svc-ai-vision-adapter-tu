@@ -20,6 +20,8 @@ namespace svc_ai_vision_adapter.Application.Services
         private readonly IAnalyzerFactory _factory;
         private readonly IImageFetcher _fetcher;
         private readonly RecognitionOptions _opt;
+        private readonly IResultAggregator _aggregator;
+        private readonly IResultShaper _shaper;
 
         private static readonly HashSet<string> FeatureAllowList = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -32,11 +34,18 @@ namespace svc_ai_vision_adapter.Application.Services
             "LabelDetection","LogoDetection"
         };
 
-        public RecognitionService(IAnalyzerFactory factory, IImageFetcher fetcher, IOptions<RecognitionOptions> opt)
+        public RecognitionService(
+            IAnalyzerFactory factory, 
+            IImageFetcher fetcher, 
+            IOptions<RecognitionOptions> opt, 
+            IResultShaper shaper, 
+            IResultAggregator aggregator)
         {
             _factory = factory;
             _fetcher = fetcher;
             _opt = opt.Value;
+            _aggregator = aggregator;
+            _shaper = shaper;
         }
 
         public async Task<RecognitionResponseDto> AnalyzeAsync(RecognitionRequestDto req, CancellationToken ct = default)
@@ -51,11 +60,18 @@ namespace svc_ai_vision_adapter.Application.Services
             var analyzer = _factory.Resolve(req.Provider);
             var images = await Task.WhenAll(req.Images.Select(i => _fetcher.FetchAsync(i, ct)));
             var result = await analyzer.AnalyzeAsync(images, features, ct);
-            var ai = result.Provider;
-            var metrics = result.InvocationMetrics;
-            var results = result.Results;
-            
-            return new RecognitionResponseDto(req.sessionId, ai, metrics, results.ToList());
+
+            var compact = result.Results.Select(_shaper.Shape).ToList(); //shapes each result from the list to shapedResult
+            var aggregate = _aggregator.Aggregate(compact); //aggregate results to compact
+
+            return new RecognitionResponseDto(
+                SessionId: req.sessionId,
+                Ai: result.Provider,
+                Metrics: result.InvocationMetrics,
+                Results: _opt.IncludeRaw ? result.Results.ToList() : new List<ProviderResultDto>(),
+                Compact: compact,
+                Aggregate: aggregate
+                );
         }
     }
 }

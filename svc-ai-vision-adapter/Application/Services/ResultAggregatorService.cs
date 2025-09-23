@@ -2,10 +2,10 @@
 
 namespace svc_ai_vision_adapter.Application.Services
 {
-    public class ResultAggregator : IResultAggregator
+    public class ResultAggregatorService : IResultAggregator
     {
         private readonly double _threshold;
-        public ResultAggregator(double threshold = 0.7) => _threshold = threshold;
+        public ResultAggregatorService(double threshold = 0.7) => _threshold = threshold;
 
         public MachineAggregateDto Aggregate(IReadOnlyList<ShapedResultDto> list)
         {
