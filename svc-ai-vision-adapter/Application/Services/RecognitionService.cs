@@ -62,7 +62,7 @@ namespace svc_ai_vision_adapter.Application.Services
             var result = await analyzer.AnalyzeAsync(images, features, ct);
 
             var compact = result.Results.Select(_shaper.Shape).ToList(); //shapes each result from the list to shapedResult
-            var aggregate = _aggregator.Aggregate(compact); //aggregate results to compact
+            var aggregate = _aggregator.Aggregate(compact); //aggregate compact results
 
             return new RecognitionResponseDto(
                 SessionId: req.sessionId,
