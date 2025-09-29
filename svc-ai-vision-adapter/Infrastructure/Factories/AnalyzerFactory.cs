@@ -4,7 +4,7 @@ using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Application.Interfaces;
 
-namespace svc_ai_vision_adapter.Infrastructure.Composition
+namespace svc_ai_vision_adapter.Infrastructure.Factories
 {
     internal sealed class AnalyzerFactory : IAnalyzerFactory
     {
