@@ -35,23 +35,37 @@ namespace svc_ai_vision_adapter.Application.Contracts
 
     public sealed record EvidenceDto(
         string? WebBestGuess,
-        IReadOnlyList<string> TopLabels,
         string? Logo,
-        string? OcrSample
+        string? OcrSample,
+        IReadOnlyList<WebEntityHitDto>? WebEntities,
+        IReadOnlyList<ObjectHitDto>? Objects,
+        IReadOnlyList<LogoHitDto>? LogoCandidates
     );
 
     public sealed record ObjectHitDto(
         string Name,
         double Score
     );
-    public sealed record MachineAggregateDto(
-        string? Brand,
-        string? Type,
-        string? Model,
-        double Confidence,
-        bool IsConfident)
+
+    public sealed record WebEntityHitDto(
+        string Description,
+        double Score
+    );
+    public sealed record LogoHitDto(
+        string Description, 
+        double Score
+        );
+    public sealed record MachineAggregateDto
     {
-        public string Name => string.Join(' ', new[] { Brand, Model }
+        public string Brand { get; init; }
+        public string? Type { get; init; }
+        public string? Model { get; init; }
+        public double Confidence { get; init; }
+        public bool IsConfident { get; init; }
+        public double? TypeConfidence { get; init; }
+        public string? TypeSource { get; init; }
+        
+        public string Name => string.Join(", ", new[] { Brand, Type, Model  }
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Select(s => s.Trim()));
     }

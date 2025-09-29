@@ -1,92 +1,168 @@
 ﻿using System.Text.Json;
+using Microsoft.Extensions.Options;
+using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Interfaces;
+using System.Linq;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 {
     internal sealed class GoogleResultShaper : IResultShaper
     {
+        private readonly int _maxResults; //set to 5 to limit data
+        public GoogleResultShaper(IOptions<RecognitionOptions> options)
+        {
+            _maxResults = options.Value.MaxResults;
+        }
         public ShapedResultDto Shape(ProviderResultDto r)
         {
             var raw = r.Raw;
 
-            // Labels (navn + score)
-            var labelHits = new List<(string Name, double Score)>();
-            if (raw.TryGetProperty("labelAnnotations", out var la) && la.ValueKind == JsonValueKind.Array)
+            //WebDetection: bestGuessLabels + webEntities
+            //Provides a series of related Web content to an image.
+            string? bestGuess = null;
+            List<WebEntityHitDto>? webEntities = null;
+            double topWebScore = 0;
+            if (raw.TryGetProperty("webDetection", out var wd) && wd.ValueKind == JsonValueKind.Object)
             {
-                foreach (var item in la.EnumerateArray())
+                //bestGuessLabels -> first non-empty as google sorts from best - worst
+                //A best guess as to the topic of the requested image inferred from similar images on the Internet.
+                if (wd.TryGetProperty("bestGuessLabels", out var bgl) && bgl.ValueKind == JsonValueKind.Array)
                 {
-                    if (item.TryGetProperty("description", out var d) && d.ValueKind == JsonValueKind.String)
+                    foreach (var bg in bgl.EnumerateArray())
                     {
-                        var name = d.GetString()!;
-                        double score = 0;
-                        if (item.TryGetProperty("score", out var s) && s.ValueKind == JsonValueKind.Number && s.TryGetDouble(out var ds))
-                            score = ds;
-                        labelHits.Add((name, score));
+                        if (bg.TryGetProperty("label", out var l) && l.ValueKind == JsonValueKind.String)
+                        {
+                            var val = l.GetString();
+                            if (!string.IsNullOrWhiteSpace(val)) { bestGuess = val; break; }
+                        }
                     }
+                }
+
+                //WebEntities -> Name + Score (top 10)
+                //Inferred entities (labels/descriptions) from similar images on the Web.
+                if (wd.TryGetProperty("webEntities", out var we) && we.ValueKind == JsonValueKind.Array)
+                {
+                    webEntities = we.EnumerateArray()
+                        .Select(e =>
+                        {
+                            var name = e.TryGetProperty("description", out var d) && d.ValueKind == JsonValueKind.String
+                                       ? d.GetString()
+                                       : null;
+                            double score = 0;
+                            if (e.TryGetProperty("score", out var s) && s.ValueKind == JsonValueKind.Number && s.TryGetDouble(out var ds))
+                                score = ds;
+                            return (name, score);
+                        })
+                        .Where(x => !string.IsNullOrWhiteSpace(x.name))
+                        .Select(x => new WebEntityHitDto(x.name!, x.score))
+                        .OrderByDescending(x => x.Score)
+                        .Take(_maxResults)
+                        .ToList();
+                    if (webEntities.Count > 0)
+                        topWebScore = webEntities.Max(x => x.Score);
                 }
             }
 
-            // Logo (første beskrivelse)
+            // Logo, provides a textual description of the entity identified,
+            // a confidence score, and a bounding polygon for the logo in the file.
             string? logo = null;
+            double logoscore = 0;
+            IReadOnlyList<LogoHitDto> logoCandidates = Array.Empty<LogoHitDto>();
+
             if (raw.TryGetProperty("logoAnnotations", out var logos) && logos.ValueKind == JsonValueKind.Array)
             {
-                foreach (var l in logos.EnumerateArray())
-                {
-                    if (l.TryGetProperty("description", out var d) && d.ValueKind == JsonValueKind.String)
+                var logoHits = logos.EnumerateArray()
+                    .Select(l =>
                     {
-                        var val = d.GetString();
-                        if (!string.IsNullOrWhiteSpace(val)) { logo = val; break; }
-                    }
+                        var name = l.TryGetProperty("description", out var d) && d.ValueKind == JsonValueKind.String ? d.GetString() : null;
+                        double score = (l.TryGetProperty("score", out var s) && s.ValueKind == JsonValueKind.Number && s.TryGetDouble(out var ds)) ? ds : 0;
+                        return (name, score); 
+                    })
+                    .Where(x=> !string.IsNullOrWhiteSpace(x.name))
+                    .OrderByDescending(x => x.score)
+                    .Take(_maxResults)
+                    .ToList();
+                if(logoHits.Count> 0)
+                {
+                    var best = logoHits[0];
+                    logo = best.name; 
+                    logoscore = best.score;
                 }
+
+                logoCandidates = logoHits
+                    .GroupBy(x => x.name!, StringComparer.OrdinalIgnoreCase)
+                    .Select(g => new LogoHitDto(g.Key, g.Max(v => v.score)))
+                    .OrderByDescending(x => x.Score)
+                    .Take(_maxResults)
+                    .ToList();
             }
 
-            // OCR (kort sample)
+            // OCR handling:Optical character recognition (OCR) for an image;
+            // text recognition and conversion to machine-coded text.
+            // Identifies and extracts UTF-8 text in an image.
+            // First, try TEXT_DETECTION (optimized for sparse text in images).
+            // Uses textAnnotations[0].description for a quick extraction.
+            // If not available, fall back to DOCUMENT_TEXT_DETECTION,
+            // which provides fullTextAnnotation (better for dense text or handwriting).
             string? ocr = null;
-            if (raw.TryGetProperty("fullTextAnnotation", out var fta) && fta.ValueKind == JsonValueKind.Object &&
-                fta.TryGetProperty("text", out var txt) && txt.ValueKind == JsonValueKind.String)
+            if (raw.TryGetProperty("textAnnotations", out var ta) && ta.ValueKind == JsonValueKind.Array)
             {
-                var t = txt.GetString();
-                if (!string.IsNullOrWhiteSpace(t))
-                    ocr = t!.Length > 200 ? t[..200] + "…" : t;
+                var first = ta.EnumerateArray().FirstOrDefault();
+                if (first.ValueKind == JsonValueKind.Object &&
+                    first.TryGetProperty("description", out var desc) &&
+                    desc.ValueKind == JsonValueKind.String)
+                    ocr = desc.GetString();
+            }
+            if (string.IsNullOrWhiteSpace(ocr) &&
+                raw.TryGetProperty("fullTextAnnotation", out var fta) &&
+                fta.ValueKind == JsonValueKind.Object &&
+                fta.TryGetProperty("text", out var ftaText) &&
+                ftaText.ValueKind == JsonValueKind.String)
+            {
+                ocr = ftaText.GetString();
             }
 
-            // Web best guess
-            string? bestGuess = null;
-            if (raw.TryGetProperty("webDetection", out var web) && web.ValueKind == JsonValueKind.Object &&
-                web.TryGetProperty("bestGuessLabels", out var bgl) && bgl.ValueKind == JsonValueKind.Array)
+
+            //Object Localization (limit to MaxResults)
+            //Provides general label and bounding box annotations
+            //for multiple objects recognized in a single image.
+            List<ObjectHitDto> objects = new();
+
+            if (raw.TryGetProperty("localizedObjectAnnotations", out var objs) &&
+                objs.ValueKind == JsonValueKind.Array)
             {
-                foreach (var bg in bgl.EnumerateArray())
-                {
-                    if (bg.TryGetProperty("label", out var l) && l.ValueKind == JsonValueKind.String)
+                objects = objs.EnumerateArray()
+                    .Select(o =>
                     {
-                        var val = l.GetString();
-                        if (!string.IsNullOrWhiteSpace(val)) { bestGuess = val; break; }
-                    }
-                }
+                        string? name = o.TryGetProperty("name", out var n) && n.ValueKind == JsonValueKind.String
+                            ? n.GetString()
+                            : null;
+
+                        double score = (o.TryGetProperty("score", out var s) &&
+                                        s.ValueKind == JsonValueKind.Number &&
+                                        s.TryGetDouble(out var ds))
+                            ? ds
+                            : 0;
+
+                        return (name, score);
+                    })
+                    .Where(x => !string.IsNullOrWhiteSpace(x.name))                          
+                    .GroupBy(x => x.name!, StringComparer.OrdinalIgnoreCase)                 
+                    .Select(g => new ObjectHitDto(g.Key, g.Max(x => x.score)))              
+                    .OrderByDescending(x => x.Score)
+                    .Take(_maxResults)
+                    .ToList();
             }
 
-            // Objects (navn + score)
-            var objects = new List<ObjectHitDto>();
-            if (raw.TryGetProperty("localizedObjectAnnotations", out var objs) && objs.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var obj in objs.EnumerateArray())
-                {
-                    var name = obj.TryGetProperty("name", out var n) && n.ValueKind == JsonValueKind.String ? n.GetString()! : "object";
-                    double score = 0;
-                    if (obj.TryGetProperty("score", out var sc) && sc.ValueKind == JsonValueKind.Number && sc.TryGetDouble(out var d))
-                        score = d;
-                    objects.Add(new ObjectHitDto(name, score));
-                }
-            }
+            double topObjectScore = objects.Count > 0 ? objects[0].Score : 0;
 
-            // Top label + vægtet confidence (brug label-score hvis tilgængelig, ellers top object)
-            var topLabel = labelHits.OrderByDescending(x => x.Score).FirstOrDefault();
-            var topObj = objects.OrderByDescending(o => o.Score).FirstOrDefault();
-            var confidence = topLabel.Score > 0 ? topLabel.Score : (topObj?.Score ?? 0);
+            double confidence = Math.Max(
+                topObjectScore, 
+                Math.Max(logoscore, Math.Min(1.0, topWebScore)));
 
             var summary = new MachineSummaryDto(
-                Type: topLabel.Name ?? labelHits.FirstOrDefault().Name, // fallback
+                Type: null,
                 Brand: logo,
                 Model: null,
                 Confidence: confidence,
@@ -95,12 +171,15 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 
             var evidence = new EvidenceDto(
                 WebBestGuess: bestGuess,
-                TopLabels: labelHits.OrderByDescending(x => x.Score).Select(x => x.Name).Take(5).ToList(),
                 Logo: logo,
-                OcrSample: ocr
+                OcrSample: ocr,
+                WebEntities: webEntities,
+                Objects : objects,
+                LogoCandidates : logoCandidates
             );
 
             return new ShapedResultDto(r.ImageRef, summary, evidence, objects);
         }
+
     }
 }
