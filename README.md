@@ -1,7 +1,7 @@
 # svc-ai-vision-adapter
 
 **Under development**
-A learning project developed as part of my studies, serving as a proof of concept (PoC) for using AI to identify and categorize machines.  
+- A learning project developed as part of my studies, serving as a proof of concept (PoC) for using AI to identify and categorize machines.  
 
 This microservice listens for events on a Kafka topic containing a presigned URL.  
 When triggered, it:  
