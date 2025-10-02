@@ -33,7 +33,6 @@ namespace SvcAiVisionAdapter.Tests.VisionAdapterTest
             var options = Options.Create(new RecognitionOptions
             {
                 MaxResults = 5,
-                // udfyld evt. andre felter hvis nødvendigt
             });
 
 

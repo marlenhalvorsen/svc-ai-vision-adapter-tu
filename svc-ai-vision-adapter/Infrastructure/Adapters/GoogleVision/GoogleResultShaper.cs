@@ -39,7 +39,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
                     }
                 }
 
-                //WebEntities -> Name + Score (top 10)
+                //WebEntities -> Name + Score (top 5)
                 //Inferred entities (labels/descriptions) from similar images on the Web.
                 if (wd.TryGetProperty("webEntities", out var we) && we.ValueKind == JsonValueKind.Array)
                 {
