@@ -68,8 +68,9 @@ namespace svc_ai_vision_adapter.Web.Controllers
                         evt.ReplyTo, response.SessionId);
                 }
             }
+            return Ok(response);
 
-            return Ok(new { received = evt.Id, status = "processed" });
+            //return Ok(new { received = evt.Id, status = "processed" });
         }
     }
 }

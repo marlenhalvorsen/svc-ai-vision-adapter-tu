@@ -7,12 +7,19 @@ namespace svc_ai_vision_adapter.Application.Interfaces
     /// </summary>
     public interface IImageAnalyzer
     {
-        Task<(AIProviderDto provider,
-              InvocationMetricsDto invocationMetrics,
-              IReadOnlyList<ProviderResultDto> results)>
+        Task<RecognitionAnalysisResult>
         AnalyzeAsync(
             IReadOnlyList<(ImageRefDto Ref, byte[] Bytes)> images,
             IReadOnlyList<string> features,
             CancellationToken ct = default); //CT impemented to be able to cancel operation if not needed anymore. 
     }
+
+    public sealed record NormalizedResult(
+        ImageRefDto ImageRef,
+        IReadOnlyList<string> Labels,
+        string? Logo, 
+        string? OcrText,
+        IReadOnlyList<(string Name, double Score)> Objects,
+        string? WebBestGuess
+        );
 }

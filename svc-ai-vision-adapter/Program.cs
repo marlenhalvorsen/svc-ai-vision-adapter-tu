@@ -1,7 +1,7 @@
 using svc_ai_vision_adapter.Application.Interfaces;
 using svc_ai_vision_adapter.Application.Services;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
-using svc_ai_vision_adapter.Infrastructure.Composition;
+using svc_ai_vision_adapter.Infrastructure.Factories;
 using svc_ai_vision_adapter.Infrastructure.Http;
 using svc_ai_vision_adapter.Infrastructure.Options;
 
@@ -25,6 +25,11 @@ builder.Services.AddTransient<GoogleVisionAnalyzer>();
 builder.Services.AddSingleton<IAnalyzerFactory, AnalyzerFactory>();
 builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+builder.Services.AddSingleton<IResultShaper, GoogleResultShaper>(); 
+builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();
+builder.Services.AddSingleton<IResultAggregator, ResultAggregatorService>();
+
+
 
 var app = builder.Build();
 

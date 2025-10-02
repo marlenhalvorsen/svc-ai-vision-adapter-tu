@@ -5,20 +5,26 @@ using Google.Cloud.Vision.V1;
 using Google.Protobuf;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
+using svc_ai_vision_adapter.Application.Services;
+using Google.Api;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 {
     internal sealed class GoogleVisionAnalyzer : IImageAnalyzer
     {
-        private readonly  ImageAnnotatorClient _imageAnnotatorClient;
+        private readonly ImageAnnotatorClient _imageAnnotatorClient;
         private readonly RecognitionOptions _recognitionOptions;
+
 
         public GoogleVisionAnalyzer(IOptions<RecognitionOptions> opt)
         {
             _recognitionOptions = opt.Value;
             _imageAnnotatorClient = ImageAnnotatorClient.Create();
+
+
         }
-        public async Task<(AIProviderDto provider, InvocationMetricsDto invocationMetrics, IReadOnlyList<ProviderResultDto> results)> AnalyzeAsync(
+
+        public async Task<RecognitionAnalysisResult> AnalyzeAsync(
             IReadOnlyList<(ImageRefDto Ref, byte[] Bytes)> images, IReadOnlyList<string> features, CancellationToken ct = default)
         {
             var batch = new BatchAnnotateImagesRequest();
@@ -34,9 +40,9 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
                 batch.Requests.Add(req);
             }
 
-            var t0 = DateTime.UtcNow;
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var resp = await _imageAnnotatorClient.BatchAnnotateImagesAsync(batch, ct);
-            var latency = (int)(DateTime.UtcNow - t0).TotalMilliseconds;
+            var latency = (int)sw.Elapsed.TotalMilliseconds;
 
             var jsonFmt = JsonFormatter.Default;
             var results = new List<ProviderResultDto>();
@@ -46,10 +52,27 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
                 results.Add(new ProviderResultDto(images[i].Ref, raw));
             }
 
-            var ai = new AIProviderDto("vision", "v1", _recognitionOptions.Region, features, new { _recognitionOptions.MaxResults });
-            var metrics = new InvocationMetricsDto(latency, images.Count, ProviderRequestId: null);
 
-            return (ai, metrics, results); 
+
+            var ai = new AIProviderDto(
+           Name: "vision",
+           ApiVersion: "v1",
+           Region: _recognitionOptions.Region,
+           Featureset: features.ToList(),
+           Config: new { MaxResults = _recognitionOptions.MaxResults }
+       );
+
+            var metrics = new InvocationMetricsDto(
+            LatencyMs: latency,
+            ImageCount: images.Count,
+            ProviderRequestId: null
+        );
+            return new RecognitionAnalysisResult
+            {
+                Provider = ai,
+                InvocationMetrics = metrics,
+                Results = _recognitionOptions.IncludeRaw ? results : Array.Empty<ProviderResultDto>(),
+            };
         }
     }
 }
