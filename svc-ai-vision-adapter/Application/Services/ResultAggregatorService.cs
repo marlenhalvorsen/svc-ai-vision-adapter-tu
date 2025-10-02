@@ -7,8 +7,6 @@ namespace svc_ai_vision_adapter.Application.Services
     {
         private readonly double _threshold;
         public ResultAggregatorService(double threshold = 0.5) => _threshold = threshold;
-
-        //Looks for patterns that could be a modelcode like 930G or D67 from the OCR
         static readonly Regex DigitsFirst = new(@"\b\d{2,4}[A-Z]{1,2}\b",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         static readonly Regex LettersFirst = new(@"\b[A-Z]{1,3}[ \t-]?\d{2,4}(?:-\d{1,2})?[A-Z]{0,2}\b",
