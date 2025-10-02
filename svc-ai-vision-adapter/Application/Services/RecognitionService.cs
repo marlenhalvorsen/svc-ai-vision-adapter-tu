@@ -50,7 +50,7 @@ namespace svc_ai_vision_adapter.Application.Services
 
         public async Task<RecognitionResponseDto> AnalyzeAsync(RecognitionRequestDto req, CancellationToken ct = default)
         {
-            // Use server configured features 
+            // Use server configured features (ignore req.Features)
             var configured = _opt.Features?.Count > 0 ? _opt.Features : DefaultFeatures;
             var features = configured
                 .Where(f => FeatureAllowList.Contains(f))
