@@ -13,7 +13,7 @@ Sends the image to an AI analyzer service (e.g., Google Vision)
 Processes and compacts the returned data
 Publishes the resulting event to its own Kafka topic
 
-#Features
+**Features**
 Kafka consumer/producer integration
 Image analysis with AI service
 Data shaping and compacting
