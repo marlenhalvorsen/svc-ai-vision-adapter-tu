@@ -1,0 +1,11 @@
+name: ci
+
+on:
+  push:
+    branches: [ main, Development ]
+  pull_request:
+    branches: [ main, Development ]
+
+jobs:
+  build-test:
+    uses: Team-2-Devs/.github/.github/workflows/dotnet-ci.yml@main
