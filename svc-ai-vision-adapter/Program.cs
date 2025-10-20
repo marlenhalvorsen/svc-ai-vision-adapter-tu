@@ -28,6 +28,9 @@ builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
 builder.Services.AddSingleton<IResultShaper, GoogleResultShaper>(); 
 builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();
 builder.Services.AddSingleton<IResultAggregator, ResultAggregatorService>();
+builder.Services.AddSingleton<IBrandCatalog>(sp =>
+    new JsonBrandCatalog(Path.Combine(AppContext.BaseDirectory, "Resources", "brands.json")));
+
 
 
 
