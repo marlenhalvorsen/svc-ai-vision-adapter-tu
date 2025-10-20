@@ -8,6 +8,24 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <None Remove="tests\VisionAdapterTest\TestData\GoogleVisionSample2.json" />
+	  <None Remove="tests\VisionAdapterTest\TestData\GoogleVisionSample3.json" />
+	  <None Remove="tests\VisionAdapterTest\TestData\GoogleVisionSample4.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="tests\VisionAdapterTest\TestData\GoogleVisionSample2.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="tests\VisionAdapterTest\TestData\GoogleVisionSample3.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="tests\VisionAdapterTest\TestData\GoogleVisionSample4.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
 
 	<ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />

@@ -8,6 +8,7 @@ using svc_ai_vision_adapter.Application.Services;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using Assert = Xunit.Assert;
+using svc_ai_vision_adapter.Application.Interfaces;
 
 namespace SvcAiVisionAdapter.Tests.VisionAdapterTest
 {
@@ -22,7 +23,9 @@ namespace SvcAiVisionAdapter.Tests.VisionAdapterTest
             // ARRANGE
             var path = Path.Combine(
                 System.AppContext.BaseDirectory,
-                "tests", "VisionAdapterTest", "TestData", "GoogleVisionSample.json");
+                "tests", "VisionAdapterTest", "TestData", "GoogleVisionSample3.json");
+            var fakeBrands = new MockBrandCatalog(new[] { "Hitachi", "Volvo", "CAT" });
+
 
             //ASSERT
             Assert.True(File.Exists(path), $"Mangler testdata: {path}");
@@ -43,11 +46,23 @@ namespace SvcAiVisionAdapter.Tests.VisionAdapterTest
             //ACT
             var prov = new ProviderResultDto(new ImageRefDto("https://example/img.png"), raw);
 
-            var shaped = new GoogleResultShaper(options).Shape(prov);
+            var shaped = new GoogleResultShaper(options, fakeBrands).Shape(prov);
             var aggregate = new ResultAggregatorService(0.70).Aggregate(new System.Collections.Generic.List<ShapedResultDto> { shaped });
 
             var pretty = JsonSerializer.Serialize(new { shaped, aggregate }, new JsonSerializerOptions { WriteIndented = true });
             _out.WriteLine(pretty); //Makes sure results are evenly spaced for readability
         }
+        private class MockBrandCatalog : IBrandCatalog
+        {
+            private readonly HashSet<string> _brands;
+            public MockBrandCatalog(IEnumerable<string> brands)
+            {
+                _brands = new(brands, StringComparer.OrdinalIgnoreCase);
+            }
+
+            public bool IsKnownBrand(string name) => _brands.Contains(name);
+            public IReadOnlyCollection<string> All => _brands;
+        }
+
     }
 }
