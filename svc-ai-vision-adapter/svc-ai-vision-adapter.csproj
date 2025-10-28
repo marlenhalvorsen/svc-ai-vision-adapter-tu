@@ -21,9 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Adapters\Kafka\Consumers\" />
-    <Folder Include="Infrastructure\Adapters\Kafka\Models\" />
-    <Folder Include="Infrastructure\Adapters\Kafka\Serialization\" />
     <Folder Include="Infrastructure\Adapters\Kafka\Producers\" />
   </ItemGroup>
 
