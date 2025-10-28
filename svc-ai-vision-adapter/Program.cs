@@ -7,6 +7,8 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Infrastructure.Factories;
 using svc_ai_vision_adapter.Infrastructure.Http;
 using svc_ai_vision_adapter.Infrastructure.Options;
+using svc_ai_vision_adapter.Infrastructure.Adapters.BrandCatalog;
+using svc_ai_vision_adapter.Application.Services.Aggregation;
 
 
 

@@ -1,7 +1,7 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
 using System.Text.RegularExpressions;
 
-namespace svc_ai_vision_adapter.Application.Services
+namespace svc_ai_vision_adapter.Application.Services.Aggregation
 {
     public class ResultAggregatorService : IResultAggregator
     {
@@ -16,13 +16,13 @@ namespace svc_ai_vision_adapter.Application.Services
 
         static readonly HashSet<string> Canonical = new(StringComparer.OrdinalIgnoreCase)
         {
-            "Wheel Loader", "Loader", 
-            "Excavator", "Bulldozer", 
-            "Motor Grader", "Dump Truck", 
+            "Wheel Loader", "Loader",
+            "Excavator", "Bulldozer",
+            "Motor Grader", "Dump Truck",
             "Backhoe Loader"
         };
 
-        private static (string? Type, double? TypeConfidence, string? Source)PickTypeWithEvidence(IReadOnlyList<ShapedResultDto> list)
+        private static (string? Type, double? TypeConfidence, string? Source) PickTypeWithEvidence(IReadOnlyList<ShapedResultDto> list)
         {
             const double entityMinScore = 0.6;
             //checks for entity hit first - marks it as web_entity for trace¨.
@@ -30,12 +30,12 @@ namespace svc_ai_vision_adapter.Application.Services
             var entityHit = list
                 .SelectMany(x => x.Evidence.WebEntities ?? Enumerable.Empty<WebEntityHitDto>())
                 .OrderByDescending(e => e.Score)
-                .FirstOrDefault(e => e.Score >=entityMinScore &&
-                Canonical.Any(t => e.Description.IndexOf(t, StringComparison.OrdinalIgnoreCase) >=0));
-            if(entityHit is not null)
+                .FirstOrDefault(e => e.Score >= entityMinScore &&
+                Canonical.Any(t => e.Description.IndexOf(t, StringComparison.OrdinalIgnoreCase) >= 0));
+            if (entityHit is not null)
             {
                 var matchedType = Canonical.First(t =>
-                entityHit.Description.IndexOf(t, StringComparison.OrdinalIgnoreCase) >=0);
+                entityHit.Description.IndexOf(t, StringComparison.OrdinalIgnoreCase) >= 0);
 
                 return (matchedType, entityHit.Score, "web_entity");
             }
@@ -54,16 +54,16 @@ namespace svc_ai_vision_adapter.Application.Services
                .Where(x => x.Match is not null)
                .OrderByDescending(x => x.Score)
                .FirstOrDefault();
-               
+
             if (objType is not null)
                 return (objType.Match, objType.Score, "object_localization");
 
             //if webentity or object is not found check for best label, then mark as web_best_guess
-            var bestGuess = (list.Select(x=>x.Evidence.WebBestGuess)
-                .FirstOrDefault(s=> !string.IsNullOrWhiteSpace(s)) ?? "")
+            var bestGuess = (list.Select(x => x.Evidence.WebBestGuess)
+                .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s)) ?? "")
                 .ToLowerInvariant();
-            foreach(var t in Canonical)
-                if (bestGuess.Contains(t.ToLowerInvariant())) 
+            foreach (var t in Canonical)
+                if (bestGuess.Contains(t.ToLowerInvariant()))
                     return (t, null, "web_best_guess");
 
 
@@ -74,10 +74,16 @@ namespace svc_ai_vision_adapter.Application.Services
         public MachineAggregateDto Aggregate(IReadOnlyList<ShapedResultDto> list)
         {
             //if no results, then return an empty object
-            if (list.Count == 0) return new MachineAggregateDto{
-                Brand = null, Type = null, Model = null, 
-                Confidence = 0, IsConfident = false,
-                TypeConfidence = 0, TypeSource = null };
+            if (list.Count == 0) return new MachineAggregateDto
+            {
+                Brand = null,
+                Type = null,
+                Model = null,
+                Confidence = 0,
+                IsConfident = false,
+                TypeConfidence = 0,
+                TypeSource = null
+            };
 
             var best = list.OrderByDescending(x => x.Machine.Confidence).First();
 
@@ -89,7 +95,7 @@ namespace svc_ai_vision_adapter.Application.Services
 
             var m1 = DigitsFirst.Match(ocr);               // finds "930G"
             var m2 = m1.Success ? Match.Empty : LettersFirst.Match(ocr); // finds ex "EC220E" (without newline)
-            var model = (m1.Success ? m1.Value : (m2.Success ? m2.Value : null))?.ToUpperInvariant();
+            var model = (m1.Success ? m1.Value : m2.Success ? m2.Value : null)?.ToUpperInvariant();
 
             //finds canonical type with score and source by using the ShapedResultDto List
             var (typeChosen, typeConfidence, typeSource) = PickTypeWithEvidence(list);
@@ -103,8 +109,8 @@ namespace svc_ai_vision_adapter.Application.Services
                 Model = model,
                 Confidence = detectionConfidence,
                 IsConfident = isImageUsable,
-                TypeConfidence = typeConfidence,     
-                TypeSource = typeSource         
+                TypeConfidence = typeConfidence,
+                TypeSource = typeSource
             };
         }
     }

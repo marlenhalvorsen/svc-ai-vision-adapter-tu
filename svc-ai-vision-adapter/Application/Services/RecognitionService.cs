@@ -67,6 +67,7 @@ namespace svc_ai_vision_adapter.Application.Services
             var compact = result.Results.Select(_shaper.Shape).ToList(); //shapes each result from the list to shapedResult
             var aggregate = _aggregator.Aggregate(compact); //aggregate compact results
 
+
             return new RecognitionResponseDto(
                 SessionId: req.sessionId,
                 Ai: result.Provider,
