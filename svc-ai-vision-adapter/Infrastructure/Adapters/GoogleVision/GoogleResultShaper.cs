@@ -2,9 +2,10 @@
 using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Interfaces;
 using System.Linq;
 using System.Text.RegularExpressions;
+using svc_ai_vision_adapter.Application.Services.Shaping;
+using svc_ai_vision_adapter.Application.Ports.Out;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 {

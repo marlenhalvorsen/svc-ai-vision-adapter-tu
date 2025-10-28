@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using svc_ai_vision_adapter.Application.Interfaces;
+using svc_ai_vision_adapter.Application.Services.Shaping;
 
 namespace svc_ai_vision_adapter.Infrastructure.Factories
 {

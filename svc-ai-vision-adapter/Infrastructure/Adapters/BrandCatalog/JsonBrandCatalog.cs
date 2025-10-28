@@ -1,7 +1,7 @@
-﻿using svc_ai_vision_adapter.Application.Interfaces;
+﻿using svc_ai_vision_adapter.Application.Ports.Out;
 using System.Text.Json;
 
-namespace svc_ai_vision_adapter.Infrastructure.Options
+namespace svc_ai_vision_adapter.Infrastructure.Adapters.BrandCatalog
 {
     public class JsonBrandCatalog : IBrandCatalog
     {

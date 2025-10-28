@@ -1,6 +1,6 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
 
-namespace svc_ai_vision_adapter.Application.Interfaces
+namespace svc_ai_vision_adapter.Application.Ports.In
 {
     /// <summary>
     /// Public use-case boundary for image recognition.
