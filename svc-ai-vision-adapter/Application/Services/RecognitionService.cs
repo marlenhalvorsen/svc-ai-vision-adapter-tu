@@ -69,7 +69,7 @@ namespace svc_ai_vision_adapter.Application.Services
 
 
             return new RecognitionResponseDto(
-                SessionId: req.sessionId,
+                SessionId: req.SessionId,
                 Ai: result.Provider,
                 Metrics: result.InvocationMetrics,
                 Results: _opt.IncludeRaw ? result.Results.ToList() : new List<ProviderResultDto>(),

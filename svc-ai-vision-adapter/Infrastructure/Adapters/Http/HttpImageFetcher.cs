@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Out;
 
-namespace svc_ai_vision_adapter.Infrastructure.Http
+namespace svc_ai_vision_adapter.Infrastructure.Adapters.Http
 {
     internal sealed class HttpImageFetcher(IHttpClientFactory http) : IImageFetcher
     {
@@ -53,7 +53,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Http
                 // check content type
                 var mediaType = resp.Content.Headers.ContentType?.MediaType?.ToLowerInvariant();
                 var isImageLike =
-                    (mediaType != null && mediaType.StartsWith("image/")) ||
+                    mediaType != null && mediaType.StartsWith("image/") ||
                     string.Equals(mediaType, "application/octet-stream", StringComparison.Ordinal);
 
                 if (!isImageLike)

@@ -5,10 +5,11 @@ using svc_ai_vision_adapter.Application.Services.Factories;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Infrastructure.Factories;
-using svc_ai_vision_adapter.Infrastructure.Http;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Infrastructure.Adapters.BrandCatalog;
 using svc_ai_vision_adapter.Application.Services.Aggregation;
+using svc_ai_vision_adapter.Infrastructure.Adapters.Http;
+using svc_ai_vision_adapter.Application.MessageHandling;
 
 
 
@@ -24,6 +25,7 @@ builder.Services.Configure<RecognitionOptions>(builder.Configuration.GetSection(
 
 //Dependency Injection
 builder.Services.AddScoped<IRecognitionService, RecognitionService>();
+builder.Services.AddScoped<IRecognitionRequestedHandler, RecognitionRequestedHandler>();
 builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
 builder.Services.AddTransient<GoogleVisionAnalyzer>();
 builder.Services.AddSingleton<IAnalyzerFactory, AnalyzerFactory>();

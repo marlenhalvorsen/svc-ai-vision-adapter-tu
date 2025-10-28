@@ -6,7 +6,7 @@
     /// <param name="Uri"></param>
     public record ImageRefDto(string Uri);
     public record RecognitionRequestDto(
-        string? sessionId,
+        string? SessionId,
         List<ImageRefDto> Images,
         string? Provider //what AI engine is going to be used, atm GoogleVisionCloud
     );
