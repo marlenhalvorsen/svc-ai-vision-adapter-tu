@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Interfaces;
+using svc_ai_vision_adapter.Application.Ports.Out;
 
 namespace svc_ai_vision_adapter.Web.Controllers
 {

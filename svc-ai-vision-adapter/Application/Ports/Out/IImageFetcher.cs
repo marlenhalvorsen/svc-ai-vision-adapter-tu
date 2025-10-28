@@ -1,6 +1,6 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
 
-namespace svc_ai_vision_adapter.Application.Interfaces
+namespace svc_ai_vision_adapter.Application.Ports.Out
 {
     /// <summary>
     /// Separate port to fetch image-bytes from an URI.

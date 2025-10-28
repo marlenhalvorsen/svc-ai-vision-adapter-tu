@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Interfaces;
+using svc_ai_vision_adapter.Application.Ports.In;
+using svc_ai_vision_adapter.Application.Ports.Out;
+using svc_ai_vision_adapter.Application.Services.Factories;
+using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Options;
 
 namespace svc_ai_vision_adapter.Application.Services
@@ -63,6 +66,7 @@ namespace svc_ai_vision_adapter.Application.Services
 
             var compact = result.Results.Select(_shaper.Shape).ToList(); //shapes each result from the list to shapedResult
             var aggregate = _aggregator.Aggregate(compact); //aggregate compact results
+
 
             return new RecognitionResponseDto(
                 SessionId: req.sessionId,

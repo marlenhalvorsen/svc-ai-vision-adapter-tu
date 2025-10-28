@@ -1,5 +1,4 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Interfaces;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using Google.Cloud.Vision.V1;
 using Google.Protobuf;
@@ -7,6 +6,7 @@ using Microsoft.Extensions.Options;
 using System.Text.Json;
 using svc_ai_vision_adapter.Application.Services;
 using Google.Api;
+using svc_ai_vision_adapter.Application.Ports.Out;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 {

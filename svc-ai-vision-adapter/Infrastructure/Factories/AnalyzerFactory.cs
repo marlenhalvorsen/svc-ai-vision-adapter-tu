@@ -2,7 +2,8 @@
 using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
-using svc_ai_vision_adapter.Application.Interfaces;
+using svc_ai_vision_adapter.Application.Ports.Out;
+using svc_ai_vision_adapter.Application.Services.Factories;
 
 namespace svc_ai_vision_adapter.Infrastructure.Factories
 {

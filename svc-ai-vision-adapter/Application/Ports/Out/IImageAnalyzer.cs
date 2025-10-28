@@ -1,6 +1,6 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
 
-namespace svc_ai_vision_adapter.Application.Interfaces
+namespace svc_ai_vision_adapter.Application.Ports.Out
 {
     /// <summary>
     /// Port towards the vision-APIs, implemented by adapteres (Google/AWS/Mock).
@@ -17,7 +17,7 @@ namespace svc_ai_vision_adapter.Application.Interfaces
     public sealed record NormalizedResult(
         ImageRefDto ImageRef,
         IReadOnlyList<string> Labels,
-        string? Logo, 
+        string? Logo,
         string? OcrText,
         IReadOnlyList<(string Name, double Score)> Objects,
         string? WebBestGuess

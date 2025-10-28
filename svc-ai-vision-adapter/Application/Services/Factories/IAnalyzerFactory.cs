@@ -1,4 +1,6 @@
-﻿namespace svc_ai_vision_adapter.Application.Interfaces
+﻿using svc_ai_vision_adapter.Application.Ports.Out;
+
+namespace svc_ai_vision_adapter.Application.Services.Factories
 {
     /// <summary>
     /// Routing abstraction for choosing the correct vision-adapter (Google/AWS/Mock)

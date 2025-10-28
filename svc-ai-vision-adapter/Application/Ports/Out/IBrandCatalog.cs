@@ -1,4 +1,4 @@
-﻿namespace svc_ai_vision_adapter.Application.Interfaces
+﻿namespace svc_ai_vision_adapter.Application.Ports.Out
 {
     public interface IBrandCatalog
     {

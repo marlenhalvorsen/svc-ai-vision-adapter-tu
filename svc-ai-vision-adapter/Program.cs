@@ -1,9 +1,14 @@
-using svc_ai_vision_adapter.Application.Interfaces;
+using svc_ai_vision_adapter.Application.Ports.In;
+using svc_ai_vision_adapter.Application.Ports.Out;
 using svc_ai_vision_adapter.Application.Services;
+using svc_ai_vision_adapter.Application.Services.Factories;
+using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Infrastructure.Factories;
 using svc_ai_vision_adapter.Infrastructure.Http;
 using svc_ai_vision_adapter.Infrastructure.Options;
+using svc_ai_vision_adapter.Infrastructure.Adapters.BrandCatalog;
+using svc_ai_vision_adapter.Application.Services.Aggregation;
 
 
 

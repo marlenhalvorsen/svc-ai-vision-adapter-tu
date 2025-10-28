@@ -4,11 +4,11 @@ using Xunit;
 using Xunit.Abstractions;
 using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Services;
+using svc_ai_vision_adapter.Application.Services.Aggregation;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using Assert = Xunit.Assert;
-using svc_ai_vision_adapter.Application.Interfaces;
+using svc_ai_vision_adapter.Application.Ports.Out;
 
 namespace SvcAiVisionAdapter.Tests.VisionAdapterTest
 {
