@@ -12,7 +12,6 @@ using svc_ai_vision_adapter.Application.Services.Aggregation;
 
 
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
