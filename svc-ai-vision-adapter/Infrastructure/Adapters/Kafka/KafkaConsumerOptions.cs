@@ -4,7 +4,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka
 {
     internal sealed class KafkaConsumerOptions
     {
-        //address for Kafka-cluster
+        //address for Kafka-broker
         public string BootstrapServers { get; set; } = default!; 
         //what instance that gets the message
         public string GroupId { get; set; } = default!;

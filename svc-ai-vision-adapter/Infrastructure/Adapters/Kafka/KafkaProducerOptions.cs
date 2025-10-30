@@ -1,6 +1,13 @@
-﻿namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka
+﻿using Confluent.Kafka;
+
+namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka
 {
-    public class KafkaProducerOptions
+    internal sealed class KafkaProducerOptions
     {
+        public string BootstrapServers { get; set; } = default!; 
+        public string Topic { get; set; } = default!;
+        //leader broker confirms message recieved
+        public Acks? Acks { get; set; } = Confluent.Kafka.Acks.Leader;
+        public int MessageSendMaxRetries { get; set; } = 3; 
     }
 }

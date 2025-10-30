@@ -31,8 +31,10 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers
         private readonly IRecognitionRequestedHandler _handler;
         private readonly KafkaConsumerOptions _options;
 
-        public RecognitionRequestedKafkaConsumer(ILogger<RecognitionRequestedKafkaConsumer> logger, 
-            IKafkaSerializer serializer, IRecognitionRequestedHandler handler, 
+        public RecognitionRequestedKafkaConsumer(
+            ILogger<RecognitionRequestedKafkaConsumer> logger, 
+            IKafkaSerializer serializer, 
+            IRecognitionRequestedHandler handler, 
             IOptions<KafkaConsumerOptions> options)
         {
             _logger = logger;
@@ -100,7 +102,8 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers
 
                 _logger.LogInformation("Processed RecognitionRequested event: RequestId={ReuestId}: " +
                     "Offset={Offset}", 
-                    externalEvent.RequestId, 
+                    externalEvent.RequestID, 
+                    //tuple with Kafka topic name and partition
                     consumeResult.TopicPartitionOffset);
             }
             
