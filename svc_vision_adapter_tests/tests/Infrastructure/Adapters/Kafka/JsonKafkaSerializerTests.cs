@@ -37,7 +37,10 @@ public class JsonKafkaSerializerTests
          
         //ASSERT
         Assert.AreEqual(evt.SessionId, deserialized.SessionId);
+        //testing nested object values string, double and bool
         Assert.AreEqual(evt.Aggregate.Name, deserialized.Aggregate.Name);
+        Assert.AreEqual(evt.Aggregate.IsConfident, deserialized.Aggregate.IsConfident);
+        Assert.AreEqual(evt.Aggregate.Confidence, deserialized.Aggregate.Confidence);
         Assert.AreEqual(evt.Provider.Name, deserialized.Provider.Name);
 
     }
