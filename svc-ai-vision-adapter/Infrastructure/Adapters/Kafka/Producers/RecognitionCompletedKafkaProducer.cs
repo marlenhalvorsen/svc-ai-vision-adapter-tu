@@ -8,34 +8,24 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers
 {
-    internal sealed class ReocgnitionCompletedKafkaProducer : IRecognitionCompletedPublisher
+    internal sealed class RecognitionCompletedKafkaProducer : IRecognitionCompletedPublisher
     {
         private readonly ILogger _logger;
         private readonly IKafkaSerializer _serializer; 
         private readonly IOptions<KafkaProducerOptions> _options;
         private readonly IProducer<string, byte[]> _producer;
 
-        public ReocgnitionCompletedKafkaProducer(
-            ILogger<ReocgnitionCompletedKafkaProducer> logger, 
+        public RecognitionCompletedKafkaProducer(
+            ILogger<RecognitionCompletedKafkaProducer> logger, 
             IKafkaSerializer serializer,
-            IOptions<KafkaProducerOptions> options
+            IOptions<KafkaProducerOptions> options,
+            IProducer<string, byte[]> producer
             )
         {
             _logger = logger;
             _serializer = serializer;
             _options = options;
-
-            var config = new ProducerConfig
-            {
-                BootstrapServers = _options.Value.BootstrapServers,
-                Acks = _options.Value.Acks,
-                MessageSendMaxRetries = _options.Value.MessageSendMaxRetries
-            };
-
-            _producer = new ProducerBuilder<string, byte[]>(config)
-                .SetKeySerializer(Serializers.Utf8)
-                .SetValueSerializer(Serializers.ByteArray)
-                .Build();
+            _producer = producer;
         }
 
         //asynchronos as i want to be able to log exceptions and catch exceptions.

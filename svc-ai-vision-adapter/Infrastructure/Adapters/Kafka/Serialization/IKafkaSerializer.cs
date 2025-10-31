@@ -4,7 +4,7 @@
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization
 {
-    internal interface IKafkaSerializer
+    public interface IKafkaSerializer
     {
         T Deserialize<T>(byte[] data);
         byte[] Serialize<T>(T message);

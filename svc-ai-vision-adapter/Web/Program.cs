@@ -15,6 +15,7 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka;
 using Confluent.Kafka;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
+using Microsoft.Extensions.Options;
 
 
 
@@ -45,7 +46,21 @@ builder.Services.AddSingleton<IBrandCatalog>(sp =>
 builder.Services.AddSingleton<IKafkaSerializer, JsonKafkaSerializer>();
 //Kafka consumer as backgroundService
 builder.Services.AddHostedService<RecognitionRequestedKafkaConsumer>();
-builder.Services.AddSingleton<IRecognitionCompletedPublisher, ReocgnitionCompletedKafkaProducer>(); 
+builder.Services.AddSingleton<IRecognitionCompletedPublisher, RecognitionCompletedKafkaProducer>(); 
+builder.Services.AddSingleton<IProducer<string, byte[]>>(sp =>
+{
+    var options = sp.GetRequiredService<IOptions<KafkaProducerOptions>>().Value;
+    var config = new ProducerConfig
+    {
+        BootstrapServers = options.BootstrapServers,
+        Acks = options.Acks,
+        MessageSendMaxRetries = options.MessageSendMaxRetries
+    };
+    return new ProducerBuilder<string, byte[]>(config)
+        .SetKeySerializer(Serializers.Utf8)
+        .SetValueSerializer(Serializers.ByteArray)
+        .Build();
+});
 
 
 
