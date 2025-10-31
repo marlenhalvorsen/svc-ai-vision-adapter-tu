@@ -35,26 +35,15 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers
             ILogger<RecognitionRequestedKafkaConsumer> logger, 
             IKafkaSerializer serializer, 
             IRecognitionRequestedHandler handler, 
-            IOptions<KafkaConsumerOptions> options)
+            IOptions<KafkaConsumerOptions> options,
+            IConsumer<string, byte[]> consumer)
         {
             _logger = logger;
             _serializer = serializer;
             _handler = handler;
             _options = options.Value;
+            _consumer = consumer; 
 
-            var config = new ConsumerConfig
-            {
-                BootstrapServers = _options.BootstrapServers,
-                GroupId = _options.GroupId,
-                EnableAutoCommit = _options.EnableAutoCommit,
-                AutoOffsetReset = AutoOffsetReset.Earliest
-            };
-
-            //deserialize the key as a string and the value as byte[]
-            _consumer = new ConsumerBuilder<string, byte[]>(config)
-                .SetKeyDeserializer(Deserializers.Utf8) //sets key to string (from bytes)
-                .SetValueDeserializer(Deserializers.ByteArray)//sets value to bytes[]
-                .Build();
         }
         //Main loop for BackgroundService.
         //This runs until the host shuts down or until cancellation is requested

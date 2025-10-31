@@ -45,8 +45,26 @@ builder.Services.AddSingleton<IBrandCatalog>(sp =>
     new JsonBrandCatalog(Path.Combine(AppContext.BaseDirectory, "Resources", "brands.json")));
 builder.Services.AddSingleton<IKafkaSerializer, JsonKafkaSerializer>();
 //Kafka consumer as backgroundService
+builder.Services.AddSingleton<IRecognitionCompletedPublisher, RecognitionCompletedKafkaProducer>();
+builder.Services.AddSingleton<IConsumer<string, byte[]>>(sp =>
+{
+    var opts = sp.GetRequiredService<IOptions<KafkaConsumerOptions>>().Value;
+
+    var config = new ConsumerConfig
+    {
+        BootstrapServers = opts.BootstrapServers,
+        GroupId = opts.GroupId,
+        EnableAutoCommit = opts.EnableAutoCommit,
+        AutoOffsetReset = AutoOffsetReset.Earliest
+    };
+
+    return new ConsumerBuilder<string, byte[]>(config)
+        .SetKeyDeserializer(Deserializers.Utf8)
+        .SetValueDeserializer(Deserializers.ByteArray)
+        .Build();
+});
 builder.Services.AddHostedService<RecognitionRequestedKafkaConsumer>();
-builder.Services.AddSingleton<IRecognitionCompletedPublisher, RecognitionCompletedKafkaProducer>(); 
+
 builder.Services.AddSingleton<IProducer<string, byte[]>>(sp =>
 {
     var options = sp.GetRequiredService<IOptions<KafkaProducerOptions>>().Value;
@@ -61,6 +79,7 @@ builder.Services.AddSingleton<IProducer<string, byte[]>>(sp =>
         .SetValueSerializer(Serializers.ByteArray)
         .Build();
 });
+
 
 
 
