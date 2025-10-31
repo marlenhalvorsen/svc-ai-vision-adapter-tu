@@ -15,7 +15,7 @@ namespace svc_ai_vision_adapter.Application.Contracts
     /// </summary>
     public sealed record AIProviderDto(
         string Name, 
-        string ApiVersion, 
+        string? ApiVersion, 
         string? Region, 
         IReadOnlyList<string> Featureset, 
         object? Config);

@@ -20,4 +20,7 @@
 	  </None>
   </ItemGroup>
 
+<ItemGroup>
+  <InternalsVisibleTo Include="svc_vision_adapter_tests" />
+</ItemGroup>
 </Project>

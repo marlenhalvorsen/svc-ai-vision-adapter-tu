@@ -1,4 +1,4 @@
-namespace svc-ai-vision-adapter-test;
+namespace svc_ai_vision_adapter_tests;
 
 [TestClass]
 public class RecognitionCompletedKafkaProducerTests

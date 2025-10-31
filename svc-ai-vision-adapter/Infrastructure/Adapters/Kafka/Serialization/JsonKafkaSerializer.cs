@@ -9,7 +9,14 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization
         //ensuring both directions use the same casing rules.
         private static readonly JsonSerializerOptions _options = new JsonSerializerOptions
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            //propertynames from "Brand" -> #brand" in json when saving or sending data
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            //allowing matching property names regardeless of case when deserializing(recieving)
+            //example Brand should be seen as brand or Brand regardless of casing
+            PropertyNameCaseInsensitive = true,
+            //includes public fields not just properties in serialization/deserialization
+            //fields are used in records or structs
+            IncludeFields = true,
         };
         public T Deserialize<T>(byte[] data)
         {

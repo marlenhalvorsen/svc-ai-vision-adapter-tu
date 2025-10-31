@@ -8,9 +8,12 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models
     {
         public string SessionId { get; init; } = default!;
         public AIProviderDto Provider { get; init; } = default!;
-        public object Aggregate { get; init; } = default!;
+        //important to state the precice type of Aggregate for 
+        //deserialization, or else it would deserialize as a JsonElement
+        //where all fields of MachineAggregateDto would be lost
+        public MachineAggregateDto Aggregate { get; init; } = default!;
 
-        public RecognitionCompletedEvent(string sessionId, AIProviderDto provider, object aggregate)
+        public RecognitionCompletedEvent(string sessionId, AIProviderDto provider, MachineAggregateDto aggregate)
         {
             SessionId = sessionId;
             Provider = provider;

@@ -1,4 +1,4 @@
-namespace svc-ai-vision-adapter-test.Infrastructure.Adapters.Kafka;
+namespace svc_ai_vision_adapter_tests.Infrastructure.Adapters.Kafka;
 
 [TestClass]
 public class RecognitionRequestedKafkaConsumerTests
