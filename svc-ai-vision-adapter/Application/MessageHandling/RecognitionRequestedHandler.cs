@@ -15,7 +15,6 @@ namespace svc_ai_vision_adapter.Application.MessageHandling
     internal sealed class RecognitionRequestedHandler : IRecognitionRequestedHandler
     {
         private readonly IRecognitionService _recognitionService;
-
         private readonly IRecognitionCompletedPublisher _publisher;
 
         public RecognitionRequestedHandler(

@@ -2,26 +2,26 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
-		<AssemblyName>svc_ai_vision_adapter_test</AssemblyName>
+		<AssemblyName>svc_vision_adapter_tests</AssemblyName>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="tests\VisionAdapterTest\TestData\GoogleVisionSample2.json" />
-	  <None Remove="tests\VisionAdapterTest\TestData\GoogleVisionSample3.json" />
-	  <None Remove="tests\VisionAdapterTest\TestData\GoogleVisionSample4.json" />
+	  <None Remove="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample2.json" />
+	  <None Remove="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample3.json" />
+	  <None Remove="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample4.json" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="tests\VisionAdapterTest\TestData\GoogleVisionSample2.json">
+	  <Content Include="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample2.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="tests\VisionAdapterTest\TestData\GoogleVisionSample3.json">
+	  <Content Include="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample3.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="tests\VisionAdapterTest\TestData\GoogleVisionSample4.json">
+	  <Content Include="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample4.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
@@ -48,13 +48,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="tests\VisionAdapterTest\TestData\GoogleVisionSample.json">
+    <None Update="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="tests\RecognitionServiceTest\" />
+    <Folder Include="tests\Application\" />
+    <Folder Include="tests\Web\" />
+    <Folder Include="tests\Application\RecognitionServiceTest\" />
   </ItemGroup>
 
 </Project>
