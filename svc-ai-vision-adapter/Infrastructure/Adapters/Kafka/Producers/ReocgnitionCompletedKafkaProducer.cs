@@ -37,17 +37,57 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers
                 .SetValueSerializer(Serializers.ByteArray)
                 .Build();
         }
-        public Task PublishAsync(
+
+        //asynchronos as i want to be able to log exceptions and catch exceptions.
+        public async Task PublishAsync(
             RecognitionResponseDto response,
             CancellationToken ct
             )
+        {            
+            try
+            {
+                //mapping from internal dto to external Kafka event
+                var completed = RecognitionCompletedMapper.ToEvent(response);
+
+                var payload = _serializer.Serialize(completed);
+
+                //build kafka message with key and value for _producer
+                var message = new Message<string, byte[]>
+                {
+                    Key = completed.SessionId,
+                    Value = payload
+                };
+
+                var deliveryResult = await _producer.ProduceAsync(_options.Value.Topic, message, ct);
+
+                _logger.LogInformation(
+                    "Published REcognitionCompleted event. " +
+                    "Status={Status}," +
+                    "Key={Key}",
+                    deliveryResult.Status,
+                    message.Key
+                    );
+
+            }
+            catch (ProduceException<string, byte[]> ex)
+            {
+                _logger.LogError(ex, "Kafka produce error: {Reason}", ex.Error.Reason);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while publishing RecognitionCompleted event");
+                throw;
+            }
+        }
+
+        public void Dispose()
         {
-            //mapping from internal dto to external Kafka event
-            var completed = RecognitionCompletedMapper.ToEvent( response );
-            
-
-
-            throw new NotImplementedException();
+            //make sure all messages are sent before disposing
+            _producer.Flush(TimeSpan.FromSeconds(1));
+            //as service is registered as a singleton, Dispose will automatically be called
+            //when app stops
+            _producer.Dispose();
         }
     }
 }
