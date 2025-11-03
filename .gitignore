@@ -33,7 +33,11 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-
+# --- Exceptions ---
+!Application/
+!Application/Ports/
+!Application/Ports/Out/
+!Application/Ports/Out/**
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -364,6 +368,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-!Application/Ports/Out/
-!Application/Ports/Out/**
+
 

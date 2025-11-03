@@ -5,25 +5,34 @@ using svc_ai_vision_adapter.Application.Services.Factories;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Infrastructure.Factories;
-using svc_ai_vision_adapter.Infrastructure.Http;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Infrastructure.Adapters.BrandCatalog;
 using svc_ai_vision_adapter.Application.Services.Aggregation;
+using svc_ai_vision_adapter.Infrastructure.Adapters.Http;
+using svc_ai_vision_adapter.Application.MessageHandling;
+using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
+using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers;
+using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka;
+using Confluent.Kafka;
+using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
+using Microsoft.Extensions.Options;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 builder.Services.Configure<RecognitionOptions>(builder.Configuration.GetSection("Recognition"));
+builder.Services.Configure<KafkaConsumerOptions>(builder.Configuration.GetSection("Kafka:Consumer"));
+builder.Services.Configure<KafkaProducerOptions>(builder.Configuration.GetSection("Kafka:Producer"));
 
 //Dependency Injection
 builder.Services.AddScoped<IRecognitionService, RecognitionService>();
+builder.Services.AddScoped<IRecognitionRequestedHandler, RecognitionRequestedHandler>();
 builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
 builder.Services.AddTransient<GoogleVisionAnalyzer>();
 builder.Services.AddSingleton<IAnalyzerFactory, AnalyzerFactory>();
@@ -34,6 +43,42 @@ builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();
 builder.Services.AddSingleton<IResultAggregator, ResultAggregatorService>();
 builder.Services.AddSingleton<IBrandCatalog>(sp =>
     new JsonBrandCatalog(Path.Combine(AppContext.BaseDirectory, "Resources", "brands.json")));
+builder.Services.AddSingleton<IKafkaSerializer, JsonKafkaSerializer>();
+//Kafka consumer as backgroundService
+builder.Services.AddSingleton<IRecognitionCompletedPublisher, RecognitionCompletedKafkaProducer>();
+builder.Services.AddSingleton<IConsumer<string, byte[]>>(sp =>
+{
+    var opts = sp.GetRequiredService<IOptions<KafkaConsumerOptions>>().Value;
+
+    var config = new ConsumerConfig
+    {
+        BootstrapServers = opts.BootstrapServers,
+        GroupId = opts.GroupId,
+        EnableAutoCommit = opts.EnableAutoCommit,
+        AutoOffsetReset = AutoOffsetReset.Earliest
+    };
+
+    return new ConsumerBuilder<string, byte[]>(config)
+        .SetKeyDeserializer(Deserializers.Utf8)
+        .SetValueDeserializer(Deserializers.ByteArray)
+        .Build();
+});
+builder.Services.AddHostedService<RecognitionRequestedKafkaConsumer>();
+
+builder.Services.AddSingleton<IProducer<string, byte[]>>(sp =>
+{
+    var options = sp.GetRequiredService<IOptions<KafkaProducerOptions>>().Value;
+    var config = new ProducerConfig
+    {
+        BootstrapServers = options.BootstrapServers,
+        Acks = options.Acks,
+        MessageSendMaxRetries = options.MessageSendMaxRetries
+    };
+    return new ProducerBuilder<string, byte[]>(config)
+        .SetKeySerializer(Serializers.Utf8)
+        .SetValueSerializer(Serializers.ByteArray)
+        .Build();
+});
 
 
 

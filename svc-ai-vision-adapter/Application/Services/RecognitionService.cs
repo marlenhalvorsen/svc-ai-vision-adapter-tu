@@ -4,6 +4,7 @@ using svc_ai_vision_adapter.Application.Ports.In;
 using svc_ai_vision_adapter.Application.Ports.Out;
 using svc_ai_vision_adapter.Application.Services.Factories;
 using svc_ai_vision_adapter.Application.Services.Shaping;
+using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Options;
 
 namespace svc_ai_vision_adapter.Application.Services
@@ -25,6 +26,7 @@ namespace svc_ai_vision_adapter.Application.Services
         private readonly RecognitionOptions _opt;
         private readonly IResultAggregator _aggregator;
         private readonly IResultShaper _shaper;
+        private readonly IRecognitionCompletedPublisher _publisher;
 
         private static readonly HashSet<string> FeatureAllowList = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -42,13 +44,14 @@ namespace svc_ai_vision_adapter.Application.Services
             IImageFetcher fetcher, 
             IOptions<RecognitionOptions> opt, 
             IResultShaper shaper, 
-            IResultAggregator aggregator)
+            IResultAggregator aggregator, IRecognitionCompletedPublisher publisher)
         {
             _factory = factory;
             _fetcher = fetcher;
             _opt = opt.Value;
             _aggregator = aggregator;
             _shaper = shaper;
+            _publisher = publisher;
         }
 
         public async Task<RecognitionResponseDto> AnalyzeAsync(RecognitionRequestDto req, CancellationToken ct = default)
@@ -67,15 +70,15 @@ namespace svc_ai_vision_adapter.Application.Services
             var compact = result.Results.Select(_shaper.Shape).ToList(); //shapes each result from the list to shapedResult
             var aggregate = _aggregator.Aggregate(compact); //aggregate compact results
 
-
-            return new RecognitionResponseDto(
-                SessionId: req.sessionId,
+            var response = new RecognitionResponseDto(
+                SessionId: req.SessionId,
                 Ai: result.Provider,
                 Metrics: result.InvocationMetrics,
                 Results: _opt.IncludeRaw ? result.Results.ToList() : new List<ProviderResultDto>(),
                 Compact: compact,
-                Aggregate: aggregate
-                );
+                Aggregate: aggregate);
+
+            return response; 
         }
     }
 }

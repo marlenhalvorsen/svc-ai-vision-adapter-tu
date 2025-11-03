@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "svc-ai-vision-adapter", "svc-ai-vision-adapter\svc-ai-vision-adapter.csproj", "{D560298E-5DD2-4A9A-A911-B19C09E798B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "svc-ai-vision-adapter-test", "svc-ai-vision-adapter-test\svc-ai-vision-adapter-test.csproj", "{7ADF7FA9-64D3-469F-9983-A43405F6B324}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "svc_vision_adapter_tests", "svc_vision_adapter_tests\svc_vision_adapter_tests.csproj", "{7ADF7FA9-64D3-469F-9983-A43405F6B324}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

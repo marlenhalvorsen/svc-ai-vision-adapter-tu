@@ -10,7 +10,7 @@ using svc_ai_vision_adapter.Infrastructure.Options;
 using Assert = Xunit.Assert;
 using svc_ai_vision_adapter.Application.Ports.Out;
 
-namespace SvcAiVisionAdapter.Tests.VisionAdapterTest
+namespace tests.Infrastructure.Adapters.VisionAdapterTest
 {
     public class GoogleResultShaperSmokeTests
     {
@@ -22,8 +22,8 @@ namespace SvcAiVisionAdapter.Tests.VisionAdapterTest
         {
             // ARRANGE
             var path = Path.Combine(
-                System.AppContext.BaseDirectory,
-                "tests", "VisionAdapterTest", "TestData", "GoogleVisionSample3.json");
+                AppContext.BaseDirectory,
+                "tests", "Infrastructure", "Adapters", "VisionAdapterTest", "TestData", "GoogleVisionSample3.json");
             var fakeBrands = new MockBrandCatalog(new[] { "Hitachi", "Volvo", "CAT" });
 
 
@@ -47,7 +47,7 @@ namespace SvcAiVisionAdapter.Tests.VisionAdapterTest
             var prov = new ProviderResultDto(new ImageRefDto("https://example/img.png"), raw);
 
             var shaped = new GoogleResultShaper(options, fakeBrands).Shape(prov);
-            var aggregate = new ResultAggregatorService(0.70).Aggregate(new System.Collections.Generic.List<ShapedResultDto> { shaped });
+            var aggregate = new ResultAggregatorService(0.70).Aggregate(new List<ShapedResultDto> { shaped });
 
             var pretty = JsonSerializer.Serialize(new { shaped, aggregate }, new JsonSerializerOptions { WriteIndented = true });
             _out.WriteLine(pretty); //Makes sure results are evenly spaced for readability
