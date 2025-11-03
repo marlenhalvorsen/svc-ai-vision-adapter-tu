@@ -23,7 +23,7 @@ namespace tests.Infrastructure.Adapters.VisionAdapterTest
             // ARRANGE
             var path = Path.Combine(
                 AppContext.BaseDirectory,
-                "tests", "VisionAdapterTest", "TestData", "GoogleVisionSample3.json");
+                "tests", "Infrastructure", "Adapters", "VisionAdapterTest", "TestData", "GoogleVisionSample3.json");
             var fakeBrands = new MockBrandCatalog(new[] { "Hitachi", "Volvo", "CAT" });
 
 
