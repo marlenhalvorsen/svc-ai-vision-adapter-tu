@@ -7,6 +7,6 @@ namespace svc_ai_vision_adapter.Infrastructure.Options
         public string? Region { get; set; }
         public int MaxResults { get; set; } = 5;
         public List<string> Features { get; set; } = new();
-        public bool IncludeRaw { get; set; } = false; 
+        public bool IncludeRaw { get; set; } = true; 
     }
 }

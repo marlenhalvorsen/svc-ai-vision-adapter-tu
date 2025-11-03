@@ -13,8 +13,8 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Http
 
         public async Task<(ImageRefDto Ref, byte[] Bytes)> FetchAsync(ImageRefDto img, CancellationToken ct = default)
         {
-            if (img?.Uri == null)
-                throw new ArgumentException("ImageRefDto.Uri must be set.");
+            if (img?.Url == null)
+                throw new ArgumentException("ImageRefDto.Url must be set.");
 
             var client = http.CreateClient();
             client.Timeout = RequestTimeout;
@@ -31,11 +31,11 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Http
             while (true)
             {
                 attempt++;
-                using var resp = await client.GetAsync(img.Uri, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
+                using var resp = await client.GetAsync(img.Url, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
 
                 // Special-case: 403 → UA/Accept/CDN-rule. Make it clear what mistake it is.
                 if (resp.StatusCode == HttpStatusCode.Forbidden)
-                    throw new InvalidOperationException($"403 Forbidden fetching image: {img.Uri}. Some hosts require a non-empty User-Agent or block non-browser requests.");
+                    throw new InvalidOperationException($"403 Forbidden fetching image: {img.Url}. Some hosts require a non-empty User-Agent or block non-browser requests.");
 
                 if (!resp.IsSuccessStatusCode)
                 {
@@ -47,7 +47,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Http
                     }
 
                     var status = (int)resp.StatusCode;
-                    throw new HttpRequestException($"HTTP {status} when fetching image: {img.Uri}");
+                    throw new HttpRequestException($"HTTP {status} when fetching image: {img.Url}");
                 }
 
                 // check content type
@@ -57,18 +57,18 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Http
                     string.Equals(mediaType, "application/octet-stream", StringComparison.Ordinal);
 
                 if (!isImageLike)
-                    throw new InvalidOperationException($"Not an image (Content-Type={mediaType ?? "null"}): {img.Uri}");
+                    throw new InvalidOperationException($"Not an image (Content-Type={mediaType ?? "null"}): {img.Url}");
 
                 // check length
                 if (resp.Content.Headers.ContentLength is long len && len > MaxBytes)
-                    throw new InvalidOperationException($"Image too large ({len} bytes > {MaxBytes}). Uri: {img.Uri}");
+                    throw new InvalidOperationException($"Image too large ({len} bytes > {MaxBytes}). Url: {img.Url}");
 
                 // stream to in memory (with max)
                 await using var stream = await resp.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
                 var bytes = await ReadAllBytesWithLimitAsync(stream, MaxBytes, ct).ConfigureAwait(false);
 
                 if (bytes.Length == 0)
-                    throw new InvalidOperationException($"Empty image: {img.Uri}");
+                    throw new InvalidOperationException($"Empty image: {img.Url}");
 
                 return (img, bytes);
             }
