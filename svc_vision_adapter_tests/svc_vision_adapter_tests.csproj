@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<AssemblyName>svc_vision_adapter_tests</AssemblyName>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample2.json" />
+	  <None Remove="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample3.json" />
+	  <None Remove="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample4.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample2.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample3.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample4.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+
+	<ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="MSTest" Version="3.6.4" />
+	  <PackageReference Include="MSTest.TestAdapter" Version="3.6.4" />
+	  <PackageReference Include="xunit" Version="2.9.0" />
+	  <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="FluentAssertions" Version="6.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\svc-ai-vision-adapter\svc-ai-vision-adapter.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="tests\Infrastructure\Adapters\VisionAdapterTest\TestData\GoogleVisionSample.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="tests\Application\" />
+    <Folder Include="tests\Web\" />
+    <Folder Include="tests\Application\RecognitionServiceTest\" />
+  </ItemGroup>
+
+</Project>
