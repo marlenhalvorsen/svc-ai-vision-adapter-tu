@@ -55,9 +55,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="tests\Application\" />
     <Folder Include="tests\Web\" />
-    <Folder Include="tests\Application\RecognitionServiceTest\" />
   </ItemGroup>
 
 </Project>

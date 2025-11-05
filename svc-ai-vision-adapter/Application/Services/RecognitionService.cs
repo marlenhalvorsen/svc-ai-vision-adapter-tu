@@ -36,7 +36,7 @@ namespace svc_ai_vision_adapter.Application.Services
 
         private static readonly List<string> DefaultFeatures = new()
         {
-            "LabelDetection","LogoDetection"
+            "LabelDetection","LogoDetection", "DocumentTextDetection"
         };
 
         public RecognitionService(
