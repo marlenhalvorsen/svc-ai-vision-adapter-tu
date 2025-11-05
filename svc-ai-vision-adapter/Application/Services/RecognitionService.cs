@@ -54,7 +54,9 @@ namespace svc_ai_vision_adapter.Application.Services
             _publisher = publisher;
         }
 
-        public async Task<RecognitionResponseDto> AnalyzeAsync(RecognitionRequestDto req, CancellationToken ct = default)
+        public async Task<RecognitionResponseDto> AnalyzeAsync(
+            RecognitionRequestDto req, 
+            CancellationToken ct = default)
         {
             // Use server configured features 
             var configured = _opt.Features?.Count > 0 ? _opt.Features : DefaultFeatures;
@@ -64,11 +66,19 @@ namespace svc_ai_vision_adapter.Application.Services
                 .ToList();
 
             var analyzer = _factory.Resolve(req.Provider);
-            var images = await Task.WhenAll(req.Images.Select(i => _fetcher.FetchAsync(i, ct)));
-            var result = await analyzer.AnalyzeAsync(images, features, ct);
+            var images = await Task
+                .WhenAll(req.Images
+                .Select(i => _fetcher.FetchAsync(i, ct)));
 
-            var compact = result.Results.Select(_shaper.Shape).ToList(); //shapes each result from the list to shapedResult
-            var aggregate = _aggregator.Aggregate(compact); //aggregate compact results
+            var result = await analyzer
+                .AnalyzeAsync(images, features, ct);
+
+            var compact = result
+                .Results
+                .Select(_shaper.Shape)
+                .ToList(); //shapes each result from the list to shapedResult
+            var aggregate = _aggregator
+                .Aggregate(compact); //aggregate compact results
 
             var response = new RecognitionResponseDto(
                 SessionId: req.SessionId,
