@@ -56,7 +56,7 @@ public class ShapingAndAggregating
         shaper.Setup(s => s.Shape(raw2)).Returns(shaped2);
 
         // Aggregator returns final aggregate result
-        var aggregate = new MachineAggregateDto("final");
+        var aggregate = new MachineAggregateDto{ Brand = "final" };
         aggregator.Setup(a => a.Aggregate(It.IsAny<IReadOnlyList<ShapedResultDto>>()))
                   .Returns(aggregate);
 
@@ -79,7 +79,10 @@ public class ShapingAndAggregating
         var response = await service.AnalyzeAsync(request, CancellationToken.None);
 
         // ASSERT
-
+        shaper.Setup(s => s.Shape(raw1)).Returns(shaped1);
+        shaper.Setup(s => s.Shape(raw2)).Returns(shaped2);
+        shaper.Verify(s => s.Shape(It.IsAny<ProviderResultDto>())
+        ,Times.Exactly(2));
     
     }
     public static ShapedResultDto Shape(string id)
