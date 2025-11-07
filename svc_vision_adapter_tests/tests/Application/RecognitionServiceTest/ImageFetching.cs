@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using Grpc.Core;
 
 
-namespace svc_vision_adapter_tests;
+namespace svc_vision_adapter_tests.Application.RecognitionServiceTest;
 
 [TestClass]
 public class ImageFetching

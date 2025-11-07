@@ -89,9 +89,9 @@ public class FeatureSelection
                     features => features.SequenceEqual(
                         new[] 
                         { 
-                            "LabelDetection", 
                             "LogoDetection",
-                            "DocumentTextDetection"
+                            "DocumentTextDetection",
+                            "WebDetection"
                         })
                 ),
                 It.IsAny<CancellationToken>()),

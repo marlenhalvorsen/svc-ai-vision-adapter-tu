@@ -51,7 +51,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers
                 var deliveryResult = await _producer.ProduceAsync(_options.Value.Topic, message, ct);
 
                 _logger.LogInformation(
-                    "Published REcognitionCompleted event. " +
+                    "Published RecognitionCompleted event. " +
                     "Status={Status}," +
                     "Key={Key}",
                     deliveryResult.Status,
