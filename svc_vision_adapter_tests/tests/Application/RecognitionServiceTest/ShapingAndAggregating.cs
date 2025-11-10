@@ -7,6 +7,7 @@ using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
 namespace svc_vision_adapter_tests.Application.RecognitionServiceTest;
