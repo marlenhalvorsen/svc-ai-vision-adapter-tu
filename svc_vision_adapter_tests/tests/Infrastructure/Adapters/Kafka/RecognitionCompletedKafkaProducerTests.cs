@@ -1,16 +1,13 @@
-using Castle.Core.Logging;
 using Confluent.Kafka;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Moq.Protected;
-using svc_ai_vision_adapter.Application.Ports.Out;
+using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
-using svc_ai_vision_adapter.Application.Contracts;
 using System.Text.Json;
-using Grpc.Core;
 
 namespace svc_ai_vision_adapter_tests;
 

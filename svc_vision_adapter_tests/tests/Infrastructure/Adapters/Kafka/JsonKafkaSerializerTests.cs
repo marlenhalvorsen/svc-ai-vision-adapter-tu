@@ -1,6 +1,8 @@
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 using svc_ai_vision_adapter.Application.Contracts;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace svc_ai_vision_adapter_tests;
 
