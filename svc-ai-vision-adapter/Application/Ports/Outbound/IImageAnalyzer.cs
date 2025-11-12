@@ -1,6 +1,6 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
 
-namespace svc_ai_vision_adapter.Application.Ports.Out
+namespace svc_ai_vision_adapter.Application.Ports.Outbound
 {
     /// <summary>
     /// Port towards the vision-APIs, implemented by adapteres (Google/AWS/Mock).

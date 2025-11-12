@@ -5,7 +5,7 @@ using svc_ai_vision_adapter.Application.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
 using svc_ai_vision_adapter.Application.Services.Shaping;
-using svc_ai_vision_adapter.Application.Ports.Out;
+using svc_ai_vision_adapter.Application.Ports.Outbound;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 {

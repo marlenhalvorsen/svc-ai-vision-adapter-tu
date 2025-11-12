@@ -1,6 +1,6 @@
 using Moq;
 using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Ports.Out;
+using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Options;
@@ -47,7 +47,7 @@ public class ShapingAndAggregating
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new RecognitionAnalysisResult
             {
-                Provider = new AIProviderDto("Google", null, null, Array.Empty<string>(), null),
+                Provider = new AIProviderDto("Google", null, Array.Empty<string>(), null),
                 InvocationMetrics = new InvocationMetricsDto(1, 1, "req"),
                 Results = new List<ProviderResultDto> { raw1, raw2 }
             });

@@ -7,7 +7,7 @@ using svc_ai_vision_adapter.Application.Contracts;
 // when a new recognition request comes in from the outside world (Kafka).
 // Infrastructure (Kafka consumer) will call this interface,
 // but the interface itself lives in Application so Application stays in control.
-namespace svc_ai_vision_adapter.Application.Ports.In
+namespace svc_ai_vision_adapter.Application.Ports.Inbound
 {
     public interface IRecognitionRequestedHandler
     {

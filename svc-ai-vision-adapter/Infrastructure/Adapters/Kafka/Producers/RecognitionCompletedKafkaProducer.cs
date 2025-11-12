@@ -1,9 +1,7 @@
 ﻿using Confluent.Kafka;
-using Google.Api;
 using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Ports.Out;
-using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models;
+using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 using System.Text;
 

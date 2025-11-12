@@ -1,4 +1,4 @@
-﻿using svc_ai_vision_adapter.Application.Ports.Out;
+﻿using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Http.Models;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.Http

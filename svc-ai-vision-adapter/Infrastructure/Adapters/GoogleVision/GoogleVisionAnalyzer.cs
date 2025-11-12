@@ -1,12 +1,10 @@
-﻿using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Infrastructure.Options;
-using Google.Cloud.Vision.V1;
+﻿using Google.Cloud.Vision.V1;
 using Google.Protobuf;
 using Microsoft.Extensions.Options;
+using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Ports.Outbound;
+using svc_ai_vision_adapter.Infrastructure.Options;
 using System.Text.Json;
-using svc_ai_vision_adapter.Application.Services;
-using Google.Api;
-using svc_ai_vision_adapter.Application.Ports.Out;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 {
@@ -55,12 +53,11 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 
 
             var ai = new AIProviderDto(
-           Name: "vision",
-           ApiVersion: "v1",
-           Region: _recognitionOptions.Region,
-           Featureset: features.ToList(),
-           Config: new { MaxResults = _recognitionOptions.MaxResults }
-       );
+            Name: "vision",
+            ApiVersion: "v1",
+            Featureset: features.ToList(),
+            MaxResults: _recognitionOptions.MaxResults
+            );
 
             var metrics = new InvocationMetricsDto(
             LatencyMs: latency,
