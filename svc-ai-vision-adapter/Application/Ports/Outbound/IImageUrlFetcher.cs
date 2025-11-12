@@ -1,6 +1,6 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
 
-namespace svc_ai_vision_adapter.Application.Ports.Out
+namespace svc_ai_vision_adapter.Application.Ports.Outbound
 {
     public interface IImageUrlFetcher
     {

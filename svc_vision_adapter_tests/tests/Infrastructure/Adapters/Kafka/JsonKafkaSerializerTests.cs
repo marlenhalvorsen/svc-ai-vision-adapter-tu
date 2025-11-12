@@ -18,7 +18,6 @@ public class JsonKafkaSerializerTests
         ( 
             "AI",
             null,
-            null,
             Array.Empty<string>(),
             null
         ), 

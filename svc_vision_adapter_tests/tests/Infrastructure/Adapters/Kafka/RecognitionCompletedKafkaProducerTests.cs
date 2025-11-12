@@ -52,7 +52,7 @@ public class RecognitionCompletedKafkaProducerTests
         );
 
         var response = new RecognitionResponseDto(
-            Ai: new("AI", null, null, new List<string>(), null),
+            Ai: new("AI", null, new List<string>(), null),
             Metrics: new(120, 3, "req-123"),
             Results: new List<ProviderResultDto>
             {

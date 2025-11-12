@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Ports.In;
-using svc_ai_vision_adapter.Application.Ports.Out;
+using svc_ai_vision_adapter.Application.Ports.Inbound;
+using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Options;
