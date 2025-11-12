@@ -2,7 +2,7 @@ name: Test Coverage
 
 on:
   pull_request:
-    branches: [ main, Development ]
+    branches: [ main ]
 
 jobs:
   coverage:
