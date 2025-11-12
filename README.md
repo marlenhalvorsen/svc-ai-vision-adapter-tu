@@ -2,7 +2,7 @@
 ![CI](https://github.com/Team-2-Devs/svc-ai-vision-adapter/actions/workflows/ci.yml/badge.svg?branch=Development)
 
 ## Status  
-**Active development** – PoC phase for AI-driven machine recognition.  
+**Active development** â€“ PoC phase for AI-driven machine recognition.  
 
 ---
 
@@ -42,7 +42,7 @@ It consumes `tu.images.uploaded` events, performs image recognition, and publish
 ## Messaging  
 | Direction | Topic | Contract | Description |
 |------------|--------|-----------|-------------|
-| **Consume** | `tu.images.uploaded` | [ImageUploaded (v0)](./docs/contracts/image.uploaded.md) | Triggered when image upload is confirmed stored |
+| **Consume** | `tu.images.uploaded` | Defined by Trackunit Ingestion Service (`ImageUploaded v0`) | Triggered when image upload is confirmed stored |
 | **Produce** | `tu.recognition.completed` | [RecognitionCompleted (v0)](./docs/contracts/recognition.completed.md) | Published when AI analysis is complete |
 
 ---
@@ -60,9 +60,9 @@ dotnet run --project svc_ai_vision_adapter
 ---
 
 ## Related Services  
-- **tu-ingestion-service** – Publishes `ImageUploaded` events  
-- **tu-storage-service** – Provides object storage and presigned URLs  
-- **tu-media-access-service** – Grants secure GET access for AI analysis  
+- **tu-ingestion-service** â€“ Publishes `ImageUploaded` events  
+- **tu-storage-service** â€“ Provides object storage and presigned URLs  
+- **tu-media-access-service** â€“ Grants secure GET access for AI analysis  
 
 ---
 
