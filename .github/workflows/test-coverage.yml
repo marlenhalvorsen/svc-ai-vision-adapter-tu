@@ -1,0 +1,43 @@
+name: Test Coverage
+
+on:
+  push:
+    branches: [ main, Development ]
+  pull_request:
+    branches: [ main, Development ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run tests with coverage
+        run: dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults
+
+      - name: Install report generator
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Generate coverage summary
+        run: |
+          reportgenerator \
+            -reports:TestResults/**/coverage.cobertura.xml \
+            -targetdir:coveragereport \
+            "-reporttypes:HtmlSummary;TextSummary"
+          cat coveragereport/Summary.txt
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coveragereport
