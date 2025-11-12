@@ -90,10 +90,11 @@ namespace svc_ai_vision_adapter.Application.Contracts
         IReadOnlyList<ObjectHitDto> Objects
     );
     public sealed record RecognitionResponseDto(
-        string? SessionId,
         AIProviderDto Ai,
         InvocationMetricsDto Metrics,
         List<ProviderResultDto> Results,
+        string? CorrelationId,
+        IReadOnlyList<string> ObjectKeys,
         List<ShapedResultDto>? Compact = null,
         MachineAggregateDto? Aggregate = null
         );

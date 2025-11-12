@@ -2,7 +2,6 @@
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.In;
 using svc_ai_vision_adapter.Application.Ports.Out;
-using svc_ai_vision_adapter.Application.Services.Factories;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Options;
@@ -21,58 +20,52 @@ namespace svc_ai_vision_adapter.Application.Services
     /// </summary>
     internal sealed class RecognitionService : IRecognitionService
     {
-        private readonly IAnalyzerFactory _factory;
         private readonly IImageFetcher _fetcher;
         private readonly RecognitionOptions _opt;
         private readonly IResultAggregator _aggregator;
         private readonly IResultShaper _shaper;
-        private readonly IRecognitionCompletedPublisher _publisher;
+        private readonly IImageUrlFetcher _urlFetcher;
+        private readonly IImageAnalyzer _imageAnalyzer;
 
-        private static readonly HashSet<string> FeatureAllowList = new(StringComparer.OrdinalIgnoreCase)
-        {
-            "LabelDetection","LogoDetection","DocumentTextDetection","TextDetection",
-            "ObjectLocalization","WebDetection"
-        };
-
-        private static readonly List<string> DefaultFeatures = new()
-        {
-            "LogoDetection", "DocumentTextDetection", "WebDetection"
-        };
 
         public RecognitionService(
-            IAnalyzerFactory factory, 
+            IImageUrlFetcher imageUrlFetcher, 
             IImageFetcher fetcher, 
             IOptions<RecognitionOptions> opt, 
+            IImageAnalyzer imageAnalyzer,
             IResultShaper shaper, 
-            IResultAggregator aggregator, IRecognitionCompletedPublisher publisher)
+            IResultAggregator aggregator)
         {
-            _factory = factory;
+            _urlFetcher = imageUrlFetcher;
             _fetcher = fetcher;
             _opt = opt.Value;
+            _imageAnalyzer = imageAnalyzer;
             _aggregator = aggregator;
             _shaper = shaper;
-            _publisher = publisher;
         }
 
         public async Task<RecognitionResponseDto> AnalyzeAsync(
-            RecognitionRequestDto req, 
+            MessageKey request, 
             CancellationToken ct = default)
         {
-            // Use server configured features 
-            var configured = _opt.Features?.Count > 0 ? _opt.Features : DefaultFeatures;
-            var features = configured
-                .Where(f => FeatureAllowList.Contains(f))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            //fech presigned urls
+            var presignedUrls = await Task.WhenAll(
+                request.ObjectKeys.Select(k => _urlFetcher.FetchUrlAsync(k, ct))
+            );
 
-            var analyzer = _factory.Resolve(req.Provider);
-            var images = await Task
-                .WhenAll(req.Images
-                .Select(i => _fetcher.FetchAsync(i, ct)));
+            //fetch images via presigned urls
+            var images = await Task.WhenAll(
+                presignedUrls.Select(url => _fetcher.FetchAsync(new ImageRefDto(url), ct))
+            );
 
-            var result = await analyzer
+            //find server configured features
+            var features = _opt.Features ?? new List<string>();
+
+            //analyse images
+            var result = await _imageAnalyzer
                 .AnalyzeAsync(images, features, ct);
 
+            //shape and aggregate
             var compact = result
                 .Results
                 .Select(_shaper.Shape)
@@ -81,12 +74,14 @@ namespace svc_ai_vision_adapter.Application.Services
                 .Aggregate(compact); //aggregate compact results
 
             var response = new RecognitionResponseDto(
-                SessionId: req.SessionId,
                 Ai: result.Provider,
                 Metrics: result.InvocationMetrics,
                 Results: _opt.IncludeRaw ? result.Results.ToList() : new List<ProviderResultDto>(),
+                CorrelationId: request.CorrelationId,
+                ObjectKeys: request.ObjectKeys,
                 Compact: compact,
-                Aggregate: aggregate);
+                Aggregate: aggregate
+                );
 
             return response; 
         }

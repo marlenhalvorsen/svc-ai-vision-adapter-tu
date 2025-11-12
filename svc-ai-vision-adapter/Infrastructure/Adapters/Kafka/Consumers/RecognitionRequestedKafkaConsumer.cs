@@ -13,7 +13,7 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 // for "RecognitionRequested" events.
 // For each message:
 //   1. Read the raw Kafka message (byte[] payload)
-//   2. Deserialize it into RecognitionRequestedEvent (external contract / wire model)
+//   2. Deserialize it into ImageUploadedEvent (external contract / wire model)
 //   3. Map it into RecognitionRequestDto (our internal request DTO)
 //   4. Call the application layer via IRecognitionRequestedHandler
 // IMPORTANT ARCHITECTURE POINTS:
@@ -81,17 +81,20 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers
             {
                 var consumeResult = _consumer.Consume(stoppingToken);
                 //takes the raw bytes and turns into our external event model
-                RecognitionRequestedEvent externalEvent = 
-                    _serializer.Deserialize<RecognitionRequestedEvent>(consumeResult.Message.Value);
-                //maps the external event to internal Dto(RecognitionRequestDto)
-                var internalRequestDto = RecognitionRequestedMapper.ToDto(externalEvent);
+                ImageUploadedEvent externalEvent = 
+                    _serializer.Deserialize<ImageUploadedEvent>(consumeResult.Message.Value);
 
+                var correlationHeader = consumeResult.Message.Headers
+                    .FirstOrDefault(h => h.Key.Equals("x-correlation-id", StringComparison.OrdinalIgnoreCase));
+
+                //maps the external event to internal Dto(MessageKey and CorrelationId)
+                var internalDto = RecognitionRequestedMapper.ToDto(externalEvent);
                 //calls upon applicationLayer
-                await _handler.HandleAsync(internalRequestDto, stoppingToken);
+                await _handler.HandleAsync(internalDto, stoppingToken);
 
-                _logger.LogInformation("Processed RecognitionRequested event: RequestId={ReuestId}: " +
+                _logger.LogInformation("Processed RecognitionRequested event: ObjectkKey={ObjectKey}: " +
                     "Offset={Offset}", 
-                    externalEvent.RequestID, 
+                    externalEvent.ObjectKey, 
                     //tuple with Kafka topic name and partition
                     consumeResult.TopicPartitionOffset);
             }

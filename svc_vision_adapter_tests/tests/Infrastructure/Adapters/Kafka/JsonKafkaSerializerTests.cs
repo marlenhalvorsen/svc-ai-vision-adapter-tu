@@ -14,7 +14,7 @@ public class JsonKafkaSerializerTests
     {
         //ARRANGE
         var serializer = new JsonKafkaSerializer();
-        var evt = new RecognitionCompletedEvent("123", new AIProviderDto 
+        var evt = new RecognitionCompletedEvent(new AIProviderDto 
         ( 
             "AI",
             null,
@@ -38,7 +38,6 @@ public class JsonKafkaSerializerTests
         var deserialized = serializer.Deserialize<RecognitionCompletedEvent>(bytes);
          
         //ASSERT
-        Assert.AreEqual(evt.SessionId, deserialized.SessionId);
         //testing nested object values string, double and bool
         Assert.AreEqual(evt.Aggregate.Name, deserialized.Aggregate.Name);
         Assert.AreEqual(evt.Aggregate.IsConfident, deserialized.Aggregate.IsConfident);

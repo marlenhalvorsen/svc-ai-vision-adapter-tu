@@ -9,6 +9,6 @@ namespace svc_ai_vision_adapter.Application.Ports.In
     /// </summary>
     public interface IRecognitionService
     {
-        Task<RecognitionResponseDto> AnalyzeAsync(RecognitionRequestDto req, CancellationToken ct = default);
+        Task<RecognitionResponseDto> AnalyzeAsync(MessageKey req, CancellationToken ct = default);
     }
 }
