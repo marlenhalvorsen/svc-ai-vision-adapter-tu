@@ -3,9 +3,11 @@ using Moq;
 using Moq.Protected;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Http;
+using svc_ai_vision_adapter.Infrastructure.Adapters.Http.Models;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace svc_vision_adapter_tests;
 
@@ -112,7 +114,52 @@ public class HttpImageFetcherTests
         await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => fetcher.FetchAsync(imageRef));
     }
 
+    [TestMethod]
+    public async Task FetchUrlAsync_Should_Post_Request_And_Return_Url()
+    {
+        // Arrange
+        var expectedUrl = "https://cdn.trackunit.com/images/img-123.jpg";
+        var expectedExpiry = DateTime.UtcNow.AddHours(1);
 
+        // Fake handler to intercept HttpClient calls
+        var handlerMock = new Mock<HttpMessageHandler>();
+        handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(req =>
+                    req.Method == HttpMethod.Post &&
+                    req.RequestUri!.AbsolutePath == "/internal/v0/media/get-url"),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = JsonContent.Create(new GetUrlResponse (expectedUrl, expectedExpiry))
+            });
+
+        var httpClient = new HttpClient(handlerMock.Object)
+        {
+            BaseAddress = new Uri("https://fake-api.trackunit.com")
+        };
+
+        var sut = new HttpImageUrlFetcher(httpClient);
+
+        // Act
+        var actualUrl = await sut.FetchUrlAsync("images/2025/11/02/img.jpg", CancellationToken.None);
+
+        // Assert
+        Assert.AreEqual(expectedUrl, actualUrl);
+
+        handlerMock.Protected().Verify(
+            "SendAsync",
+            Times.Once(),
+            ItExpr.Is<HttpRequestMessage>(req =>
+                req.Method == HttpMethod.Post &&
+                req.RequestUri!.AbsolutePath == "/internal/v0/media/get-url"),
+            ItExpr.IsAny<CancellationToken>()
+        );
+    }
     private static HttpClient CreateHttpClientReturning(byte[] imageBytes, string contentType = "image/png")
     {
         var handler = new Mock<HttpMessageHandler>();

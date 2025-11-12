@@ -5,6 +5,7 @@ using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Out;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
+using System.Text;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers
 {
@@ -41,11 +42,19 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers
 
                 var payload = _serializer.Serialize(completed);
 
+                var headers = new Headers
+                {   
+                    { "x-correlation-id", Encoding.UTF8.GetBytes(response.CorrelationId ?? Guid.NewGuid().ToString()) },
+                    { "x-schema", Encoding.UTF8.GetBytes("recognition.completed.v0") },
+                    { "x-producer", Encoding.UTF8.GetBytes("svc-ai-vision-adapter") }
+                };
+
                 //build kafka message with key and value for _producer
                 var message = new Message<string, byte[]>
                 {
-                    Key = completed.SessionId,
-                    Value = payload
+                    Key = response.ObjectKeys.FirstOrDefault(),
+                    Value = payload,
+                    Headers = headers
                 };
 
                 var deliveryResult = await _producer.ProduceAsync(_options.Value.Topic, message, ct);
