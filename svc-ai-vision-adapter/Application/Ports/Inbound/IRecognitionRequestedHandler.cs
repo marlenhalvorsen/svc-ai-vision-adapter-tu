@@ -12,6 +12,6 @@ namespace svc_ai_vision_adapter.Application.Ports.In
     public interface IRecognitionRequestedHandler
     {
         //Defines how the application wants to recieve work.
-        Task HandleAsync(RecognitionRequestDto request, CancellationToken ct); 
+        Task HandleAsync(MessageKey key, CancellationToken ct); 
     }
 }

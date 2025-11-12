@@ -6,8 +6,10 @@
     /// <param name="Url"></param>
     public record ImageRefDto(string Url);
     public record RecognitionRequestDto(
-        string? SessionId,
-        List<ImageRefDto> Images,
-        string? Provider //what AI engine is going to be used, atm GoogleVisionCloud
+        MessageKey payload
     );
+    public record MessageKey(
+        IReadOnlyList<string> ObjectKeys,
+        string? CorrelationId = null
+        );
 }

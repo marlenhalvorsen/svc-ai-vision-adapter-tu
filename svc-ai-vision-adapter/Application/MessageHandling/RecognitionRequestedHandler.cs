@@ -25,7 +25,7 @@ namespace svc_ai_vision_adapter.Application.MessageHandling
             _publisher = publisher;
         }
 
-        public async Task HandleAsync(RecognitionRequestDto request, CancellationToken ct)
+        public async Task HandleAsync(MessageKey request, CancellationToken ct)
         {
             RecognitionResponseDto response = await _recognitionService.AnalyzeAsync(request, ct);
 
