@@ -1,10 +1,10 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
 
-namespace svc_ai_vision_adapter.Application.Ports.Out
+namespace svc_ai_vision_adapter.Application.Ports.Outbound
 {
     /// <summary>
     /// Separate port to fetch image-bytes from an URI.
-    /// In this way we can test RecognitionService (mock fetch) and change protocol if needed. 
+    /// Inbound this way we can test RecognitionService (mock fetch) and change protocol if needed. 
     /// </summary>
     public interface IImageFetcher
     {

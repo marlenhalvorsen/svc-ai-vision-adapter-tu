@@ -16,9 +16,8 @@ namespace svc_ai_vision_adapter.Application.Contracts
     public sealed record AIProviderDto(
         string Name, 
         string? ApiVersion, 
-        string? Region, 
-        IReadOnlyList<string> Featureset, 
-        object? Config);
+        IReadOnlyList<string> Featureset,
+        int? MaxResults = null);
 
     /// <summary>
     /// provides visibility that can be used for performance monitoring and troubleshooting

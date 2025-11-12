@@ -5,7 +5,7 @@ using Confluent.Kafka;
 using Microsoft.Extensions.Hosting; //backgroundservice
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using svc_ai_vision_adapter.Application.Ports.In;
+using svc_ai_vision_adapter.Application.Ports.Inbound;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 // This class is the Kafka consumer adapter.

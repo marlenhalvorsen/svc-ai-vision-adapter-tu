@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Ports.Out;
+using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Options;
@@ -37,7 +37,7 @@ public class FeatureSelection
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new RecognitionAnalysisResult
             {
-                Provider = new AIProviderDto("Google Vision", null, null, null, null),
+                Provider = new AIProviderDto("Google Vision", null, null, null),
                 InvocationMetrics = new InvocationMetricsDto(0, 1, "123"),
                 Results = new List<ProviderResultDto>
                 {

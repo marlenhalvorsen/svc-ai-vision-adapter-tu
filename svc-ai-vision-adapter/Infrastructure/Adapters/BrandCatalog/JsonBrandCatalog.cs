@@ -1,4 +1,4 @@
-﻿using svc_ai_vision_adapter.Application.Ports.Out;
+﻿using svc_ai_vision_adapter.Application.Ports.Outbound;
 using System.Text.Json;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.BrandCatalog
