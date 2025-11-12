@@ -33,7 +33,7 @@ jobs:
           reportgenerator \
             -reports:TestResults/**/coverage.cobertura.xml \
             -targetdir:coveragereport \
-            -reporttypes:HtmlSummary;TextSummary
+            "-reporttypes:HtmlSummary;TextSummary"
           cat coveragereport/Summary.txt
 
       - name: Upload coverage report
