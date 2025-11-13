@@ -49,9 +49,6 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
                 var raw = JsonDocument.Parse(jsonFmt.Format(resp.Responses[i])).RootElement;
                 results.Add(new ProviderResultDto(images[i].Ref, raw));
             }
-
-
-
             var ai = new AIProviderDto(
             Name: "vision",
             ApiVersion: "v1",
