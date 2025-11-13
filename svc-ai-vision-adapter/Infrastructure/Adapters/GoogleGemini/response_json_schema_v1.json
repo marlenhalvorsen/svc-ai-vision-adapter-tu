@@ -1,0 +1,57 @@
+{
+  "type": "object",
+
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [ "success", "refusal" ]
+    },
+
+    "reason": {
+      "type": "string",
+      "description": "Reason for refusal (when status = refusal)"
+    },
+
+    "commentary": {
+      "type": "string",
+      "description": "Optional explanation or debug info"
+    },
+
+    "partial": {
+      "type": "boolean",
+      "description": "True if Gemini could only identify some information"
+    },
+
+    "brand": {
+      "type": "string",
+      "description": "Machine brand e.g. Caterpillar, Hitachi"
+    },
+
+    "type": {
+      "type": "string",
+      "description": "Machine type e.g. Excavator, Bulldozer"
+    },
+
+    "model": {
+      "type": "string",
+      "description": "Machine model number e.g. 930G, ZX350LC-7"
+    },
+
+    "attachment": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Attachments identified for the machine"
+    },
+
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Model confidence from 0–1"
+    }
+  },
+
+  "required": [ "status" ]
+}
