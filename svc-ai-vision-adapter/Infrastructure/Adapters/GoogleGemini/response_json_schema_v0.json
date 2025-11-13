@@ -1,0 +1,83 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/maha63312/svc-ai-vision-adapter/main/Infrastructure/Adapters/GoogleGemini/response_json_schema_v0.json",
+  "title": "MachineIdentification",
+  "type": "object",
+
+  "properties": {
+    "status": {
+      "description": "Indicates whether identification succeeded or was refused",
+      "type": "string",
+      "enum": [ "success", "refusal" ]
+    }
+  },
+
+  "required": [ "status" ],
+
+  "oneOf": [
+    {
+      "title": "Success",
+      "properties": {
+        "status": { "const": "success" },
+
+        "partial": {
+          "description": "True if Gemini could only identify some information",
+          "type": "boolean"
+        },
+
+        "brand": {
+          "description": "Machine brand e.g. Caterpillar, Hitachi",
+          "type": "string"
+        },
+
+        "type": {
+          "description": "Machine type e.g. Excavator, Bulldozer",
+          "type": "string"
+        },
+
+        "model": {
+          "description": "Machine model number e.g. 930G, ZX350LC-7",
+          "type": "string"
+        },
+
+        "attachment": {
+          "description": "Attachments Gemini could identify",
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+
+        "confidence": {
+          "description": "Gemini's confidence score from 0–1",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+
+        "typeSource": {
+          "description": "Where Gemini retrieved the machine classification info",
+          "type": "string"
+        }
+      }
+    },
+
+    {
+      "title": "Refusal",
+      "properties": {
+        "status": { "const": "refusal" },
+
+        "reason": {
+          "description": "Why Gemini refused to identify the machine",
+          "type": "string"
+        },
+
+        "commentary": {
+          "description": "Optional human-friendly explanation or debug text",
+          "type": "string"
+        }
+      },
+      "required": [ "reason" ]
+    }
+  ]
+}

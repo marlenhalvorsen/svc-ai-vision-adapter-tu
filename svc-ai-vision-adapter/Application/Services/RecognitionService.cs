@@ -48,7 +48,7 @@ namespace svc_ai_vision_adapter.Application.Services
             MessageKey request, 
             CancellationToken ct = default)
         {
-            //fech presigned urls
+            //fetch presigned urls
             var presignedUrls = await Task.WhenAll(
                 request.ObjectKeys.Select(k => _urlFetcher.FetchUrlAsync(k, ct))
             );
@@ -65,11 +65,13 @@ namespace svc_ai_vision_adapter.Application.Services
             var result = await _imageAnalyzer
                 .AnalyzeAsync(images, features, ct);
 
-            //shape and aggregate
+            //shape result 
             var compact = result
                 .Results
                 .Select(_shaper.Shape)
                 .ToList(); //shapes each result from the list to shapedResult
+
+            //aggregate the shaped result 
             var aggregate = _aggregator
                 .Aggregate(compact); //aggregate compact results
 

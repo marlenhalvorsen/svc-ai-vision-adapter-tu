@@ -1,6 +1,6 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
 
-namespace svc_ai_vision_adapter.Application.Contracts
+namespace svc_ai_vision_adapter.Application.Models
 {
     public sealed record RecognitionAnalysisResult
     {
