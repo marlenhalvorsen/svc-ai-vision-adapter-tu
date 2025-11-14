@@ -27,7 +27,7 @@
       "description": "Machine brand e.g. Caterpillar, Hitachi"
     },
 
-    "type": {
+    "machineType": {
       "type": "string",
       "description": "Machine type e.g. Excavator, Bulldozer"
     },
@@ -36,7 +36,15 @@
       "type": "string",
       "description": "Machine model number e.g. 930G, ZX350LC-7"
     },
-
+    "weight": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Machine’s estimated operating weight in kg"
+    },
+    "year": {
+      "type": "string",
+      "description": "Estimated production year range e.g. 2010-2016"
+    },
     "attachment": {
       "type": "array",
       "items": {
@@ -50,8 +58,14 @@
       "minimum": 0,
       "maximum": 1,
       "description": "Model confidence from 0–1"
+    },
+    "source": {
+      "type": "string",
+      "description": "What information formed the basis of the identification"
     }
+
   },
+
 
   "required": [ "status" ]
 }
