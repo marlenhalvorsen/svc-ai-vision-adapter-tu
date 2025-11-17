@@ -6,7 +6,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers
 {
     internal static class RecognitionRequestedMapper
     {
-        public static MessageKey ToDto(ImageUploadedEvent evt)
-            => new(new List<string> { evt.ObjectKey }, evt.CorrelationId);
+        public static MessageKey ToDto(ImageUploadedEvent evt, string? correlationId)
+            => new(new List<string> { evt.ObjectKey }, correlationId);
     }
 }

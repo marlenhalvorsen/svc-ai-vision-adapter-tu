@@ -69,16 +69,30 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers
                 var consumeResult = _consumer.Consume(stoppingToken);
 
                 ImageUploadedEvent externalEvent =
-                    _serializer.Deserialize<ImageUploadedEvent>(consumeResult.Message.Value);
+                 _serializer.Deserialize<ImageUploadedEvent>(consumeResult.Message.Value);
 
-                var internalDto = RecognitionRequestedMapper.ToDto(externalEvent);
+                //extract correlationId from kafka header
+                var correlationIdHeader = consumeResult.Message.Headers
+                    .FirstOrDefault(h => h.Key == "x-correlation-id")
+                    ?.GetValueBytes();
 
+                string? correlationId =
+                    correlationIdHeader is not null
+                        ? System.Text.Encoding.UTF8.GetString(correlationIdHeader)
+                        : null;
+
+                var internalDto = RecognitionRequestedMapper.ToDto(externalEvent, correlationId);
+
+                //in hosted services (BackgroundService), create scopes inside the work loop,
+                //not in the host builder.
                 using var scope = _scopeFactory.CreateScope();
                 var handler = scope.ServiceProvider.GetRequiredService<IRecognitionRequestedHandler>();
                 await handler.HandleAsync(internalDto, stoppingToken);
 
-                _logger.LogInformation("Processed RecognitionRequested event: ObjectKey={ObjectKey}: Offset={Offset}",
+                _logger.LogInformation(
+                    "Processed ImageUploaded event: ObjectKey={ObjectKey}, CorrelationId={CorrelationId}, Offset={Offset}",
                     externalEvent.ObjectKey,
+                    correlationId,
                     consumeResult.TopicPartitionOffset);
             }
             catch (ConsumeException ex)
