@@ -46,15 +46,17 @@ Signals that image analysis and aggregation have finished, and the resulting mac
     "features": [ "LOGO_DETECTION", "WEB_DETECTION" ],
     "region": "us-central1"
   },
-  "aggregate": {
-    "brand": "Caterpillar",
-    "type": "Wheel Loader",
-    "model": "930G",
-    "confidence": 0.93,
+"aggregate": {
+    "brand": "Komatsu",
+    "type": "Excavator",
+    "model": "PC200-6",
+    "weight": 20500,
+    "year": "1994–2002",
+    "attachment": ["bucket"],
+    "confidence": 0.92,
     "isConfident": true,
-    "typeConfidence": 0.85,
-    "typeSource": "object_localization"
-  }
+    "typeSource": "gemini"
+    }
 }
 ```
 ---
@@ -84,6 +86,7 @@ Signals that image analysis and aggregation have finished, and the resulting mac
 | Date | Version | Notes |
 |------|----------|-------|
 | 2025-11-12 | v0 | Initial draft version matching producer `RecognitionCompletedKafkaProducer` |
+| 2025-11-17 | v0 | Updated example payload to reflect Gemini-enhanced MachineAggregateDto (weight, year, attachment, typeSource) |
 
 ---
 
