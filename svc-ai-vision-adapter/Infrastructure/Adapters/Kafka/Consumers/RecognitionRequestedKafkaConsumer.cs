@@ -73,11 +73,9 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers
 
                 var internalDto = RecognitionRequestedMapper.ToDto(externalEvent);
 
-                // ------------- FIX: CREATE SCOPE HERE -------------
                 using var scope = _scopeFactory.CreateScope();
                 var handler = scope.ServiceProvider.GetRequiredService<IRecognitionRequestedHandler>();
                 await handler.HandleAsync(internalDto, stoppingToken);
-                // ---------------------------------------------------
 
                 _logger.LogInformation("Processed RecognitionRequested event: ObjectKey={ObjectKey}: Offset={Offset}",
                     externalEvent.ObjectKey,
