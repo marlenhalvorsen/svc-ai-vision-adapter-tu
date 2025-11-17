@@ -35,7 +35,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./svc-ai-vision-adapter/Dockerfile
+          context: ./svc-ai-vision-adapter
+          file: ./svc-ai-vision-adapter/Dockerfile
           push: true
           build-args: |
             GH_OWNER=${{ env.GH_OWNER_LC }}
