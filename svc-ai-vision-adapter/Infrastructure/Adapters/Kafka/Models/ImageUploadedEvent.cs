@@ -10,5 +10,8 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models
     {
         [JsonPropertyName("objectKey")]
         public string ObjectKey { get; init; } = default!;
+        [JsonPropertyName("correlationId")]
+
+        public string? CorrelationId { get; init; } 
     }
 }

@@ -8,7 +8,7 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_vision_adapter_tests.Fakes;
 
-namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
+namespace svc_vision_adapter_tests.Integration
 {
     [TestClass]
     public class RecognitionServiceTests
