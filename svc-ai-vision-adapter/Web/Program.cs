@@ -22,6 +22,9 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini.Prompt;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//load .env
+DotNetEnv.Env.Load();
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -29,6 +32,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<RecognitionOptions>(builder.Configuration.GetSection("Recognition"));
 builder.Services.Configure<KafkaConsumerOptions>(builder.Configuration.GetSection("Kafka:Consumer"));
 builder.Services.Configure<KafkaProducerOptions>(builder.Configuration.GetSection("Kafka:Producer"));
+builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
 
 //Dependency Injection
 //Kafka consumer as backgroundService
@@ -60,7 +64,6 @@ builder.Services.AddHttpClient<IImageUrlFetcher, HttpImageUrlFetcher>((sp, clien
 
 builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
 builder.Services.AddScoped<IImageAnalyzer, GoogleVisionAnalyzer>();
-builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
 builder.Services.AddHttpClient<GeminiMachineAnalyzer>();
 builder.Services.AddSingleton<IMachineReasoningAnalyzer, GeminiMachineAnalyzer>();
 builder.Services.AddSingleton<GeminiPromptLoader>();
