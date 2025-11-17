@@ -15,6 +15,7 @@ using Confluent.Kafka;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using Microsoft.Extensions.Options;
 using Google.Api;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini;
 
 
 
@@ -58,6 +59,7 @@ builder.Services.AddHttpClient<IImageUrlFetcher, HttpImageUrlFetcher>(client =>
 builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
 builder.Services.AddScoped<IImageAnalyzer, GoogleVisionAnalyzer>();
 builder.Services.AddTransient<GoogleVisionAnalyzer>();
+builder.Services.AddScoped<IMachineReasoningAnalyzer, GeminiMachineAnalyzer>();
 builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();

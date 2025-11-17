@@ -1,4 +1,7 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/maha63312/svc-ai-vision-adapter/main/Infrastructure/Adapters/GoogleGemini/response_json_schema_v0.json",
+  "title": "MachineIdentification",
   "type": "object",
 
   "properties": {
@@ -22,7 +25,7 @@
       "description": "True if Gemini could only identify some information"
     },
 
-    "manufacturer": {
+    "brand": {
       "type": "string",
       "description": "Machine brand e.g. Caterpillar, Hitachi"
     },
@@ -44,7 +47,8 @@
     "year": {
       "type": "string",
       "description": "Estimated production year range e.g. 2010-2016",
-      "maxLength": 20
+      "maxLength": 20,
+      "pattern": "^[0-9]{4}(-[0-9]{4})?$"
     },
     "attachment": {
       "type": "array",

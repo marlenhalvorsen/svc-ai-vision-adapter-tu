@@ -5,6 +5,7 @@ using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Options;
+using svc_ai_vision_adapter.Application.Ports.Outbound;
 
 namespace svc_ai_vision_adapter.Application.Services
 {
@@ -16,7 +17,8 @@ namespace svc_ai_vision_adapter.Application.Services
     /// 1. What features to be applied
     /// 2. fetch bytes via IImageFetcher
     /// 3. sends pictures and features to analyzer. 
-    /// 4. Returns RecognitionResponseDto.
+    /// 4. Builds RecognitionResponseDto.
+    /// 5. Enrichs metadata with LLM response if EnableReasoning in options are true
     /// </summary>
     internal sealed class RecognitionService : IRecognitionService
     {
@@ -26,6 +28,7 @@ namespace svc_ai_vision_adapter.Application.Services
         private readonly IResultShaper _shaper;
         private readonly IImageUrlFetcher _urlFetcher;
         private readonly IImageAnalyzer _imageAnalyzer;
+        private readonly IMachineReasoningAnalyzer _machineReasoning;
 
 
         public RecognitionService(
@@ -34,7 +37,8 @@ namespace svc_ai_vision_adapter.Application.Services
             IOptions<RecognitionOptions> opt, 
             IImageAnalyzer imageAnalyzer,
             IResultShaper shaper, 
-            IResultAggregator aggregator)
+            IResultAggregator aggregator,
+            IMachineReasoningAnalyzer machineReasoning)
         {
             _urlFetcher = imageUrlFetcher;
             _fetcher = fetcher;
@@ -42,6 +46,7 @@ namespace svc_ai_vision_adapter.Application.Services
             _imageAnalyzer = imageAnalyzer;
             _aggregator = aggregator;
             _shaper = shaper;
+            _machineReasoning = machineReasoning;
         }
 
         public async Task<RecognitionResponseDto> AnalyzeAsync(
@@ -75,6 +80,7 @@ namespace svc_ai_vision_adapter.Application.Services
             var aggregate = _aggregator
                 .Aggregate(compact); //aggregate compact results
 
+            //builds RecognitionResponseDto
             var response = new RecognitionResponseDto(
                 Ai: result.Provider,
                 Metrics: result.InvocationMetrics,
@@ -84,6 +90,15 @@ namespace svc_ai_vision_adapter.Application.Services
                 Compact: compact,
                 Aggregate: aggregate
                 );
+
+
+            //enable machineReasoning if true in appsettings
+            if (_opt.EnableReasoning)
+            {
+                var refined = await _machineReasoning.AnalyzeAsync(aggregate, ct);
+                //enrich machineAggregate with response from LLM
+                response = response with { Aggregate = refined };
+            }
 
             return response; 
         }
