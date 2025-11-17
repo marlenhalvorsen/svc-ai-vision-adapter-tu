@@ -22,7 +22,7 @@
       "description": "True if Gemini could only identify some information"
     },
 
-    "brand": {
+    "manufacturer": {
       "type": "string",
       "description": "Machine brand e.g. Caterpillar, Hitachi"
     },
@@ -43,7 +43,8 @@
     },
     "year": {
       "type": "string",
-      "description": "Estimated production year range e.g. 2010-2016"
+      "description": "Estimated production year range e.g. 2010-2016",
+      "maxLength": 20
     },
     "attachment": {
       "type": "array",
