@@ -87,5 +87,8 @@ Signals that image analysis and aggregation have finished, and the resulting mac
 
 ---
 
+## Related Documents
+- [Recognition Pipeline Overview](../../docs/architecture/recognition-pipeline.md)
+
 **End of document**
 
