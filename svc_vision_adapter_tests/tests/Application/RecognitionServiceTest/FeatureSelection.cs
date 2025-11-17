@@ -26,6 +26,7 @@ public class FeatureSelection
         var shaper = Mock.Of<IResultShaper>();
         var aggregator = Mock.Of<IResultAggregator>();
         var publisher = Mock.Of<IRecognitionCompletedPublisher>();
+        var machineReasoner = Mock.Of<IMachineReasoningAnalyzer>();
 
         // fake image bytes
         fetcher.Setup(f => f.FetchAsync(
@@ -57,7 +58,8 @@ public class FeatureSelection
             options,
             analyzer.Object,
             shaper,
-            aggregator);
+            aggregator, 
+            machineReasoner);
 
         var messageKey = new MessageKey(new List<string> { "img-001" }, "corr-123");
 

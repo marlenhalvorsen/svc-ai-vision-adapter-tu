@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services;
@@ -14,6 +15,8 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
     public class RecognitionServiceTests
     {
         private RecognitionService _sut;
+        private Mock<IMachineReasoningAnalyzer> _fakeReasoner;
+
 
         [TestInitialize]
         public void Setup()
@@ -33,13 +36,30 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
             var shaper = new GoogleResultShaper(options, fakeBrandCatalog);
             var aggregator = new ResultAggregatorService(0.70);
 
+            // MOCK Gemini machine reasoning analyzer as this calls external API
+            _fakeReasoner = new Mock<IMachineReasoningAnalyzer>();
+
+            // what should reasoning return
+            _fakeReasoner
+                .Setup(r => r.AnalyzeAsync(It.IsAny<MachineAggregateDto>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new MachineAggregateDto
+                {
+                    Brand = "Caterpillar",
+                    Type = "Wheel Loader",
+                    Model = "930G",
+                    Confidence = 0.90,
+                    IsConfident = true,
+                    TypeSource = "mocked"
+                });
+
             _sut = new RecognitionService(
                 fakeUrlFetcher,
                 fakeFetcher,
                 options,
                 fakeAnalyzer,
                 shaper,
-                aggregator
+                aggregator,
+                _fakeReasoner.Object
             );
         }
 
