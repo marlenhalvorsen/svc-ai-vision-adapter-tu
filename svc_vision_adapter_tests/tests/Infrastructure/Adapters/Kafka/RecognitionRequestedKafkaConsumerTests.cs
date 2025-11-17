@@ -5,10 +5,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Inbound;
-using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
+using svc_ai_vision_adapter.Infrastructure.Options;
 
 namespace svc_vision_adapter_tests.Infrastructure.Kafka.Consumers
 {

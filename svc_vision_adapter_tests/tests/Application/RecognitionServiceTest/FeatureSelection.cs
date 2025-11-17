@@ -2,11 +2,14 @@ using Microsoft.Extensions.Options;
 using Moq;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
-using svc_ai_vision_adapter.Application.Services;
+using svc_ai_vision_adapter.Application.Models;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using svc_ai_vision_adapter.Application.Services;
+using svc_ai_vision_adapter.Application.Models;
+
 
 namespace svc_vision_adapter_tests.Application.RecognitionServiceTest;
 

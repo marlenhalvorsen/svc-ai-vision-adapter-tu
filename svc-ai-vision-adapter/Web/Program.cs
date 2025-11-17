@@ -11,7 +11,6 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.Http;
 using svc_ai_vision_adapter.Application.MessageHandling;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers;
-using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka;
 using Confluent.Kafka;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using Microsoft.Extensions.Options;

@@ -14,7 +14,7 @@
     <PackageReference Include="Google.Cloud.Vision.V1" Version="3.7.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-	  <InternalsVisibleTo Include="svc_ai_vision_adapter_test" />
+	  <InternalsVisibleTo Include="svc_vision_adapter_test" />
 	  <None Update="Infrastructure/Resources/brands.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

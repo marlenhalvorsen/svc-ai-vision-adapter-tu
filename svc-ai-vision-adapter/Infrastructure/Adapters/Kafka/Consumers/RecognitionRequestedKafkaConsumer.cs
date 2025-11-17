@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Ports.Inbound;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
+using svc_ai_vision_adapter.Infrastructure.Options;
 // This class is the Kafka consumer adapter.
 // It runs in the background (via BackgroundService) and listens to a Kafka topic
 // for "RecognitionRequested" events.
