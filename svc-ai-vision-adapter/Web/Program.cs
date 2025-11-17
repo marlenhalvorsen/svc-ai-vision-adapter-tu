@@ -16,6 +16,7 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using Microsoft.Extensions.Options;
 using Google.Api;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini.Prompt;
 
 
 
@@ -25,7 +26,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpClient();
 builder.Services.Configure<RecognitionOptions>(builder.Configuration.GetSection("Recognition"));
 builder.Services.Configure<KafkaConsumerOptions>(builder.Configuration.GetSection("Kafka:Consumer"));
 builder.Services.Configure<KafkaProducerOptions>(builder.Configuration.GetSection("Kafka:Producer"));
@@ -52,14 +52,18 @@ builder.Services.AddSingleton<IConsumer<string, byte[]>>(sp =>
 builder.Services.AddHostedService<RecognitionRequestedKafkaConsumer>();
 builder.Services.AddScoped<IRecognitionService, RecognitionService>();
 builder.Services.AddScoped<IRecognitionRequestedHandler, RecognitionRequestedHandler>();
-builder.Services.AddHttpClient<IImageUrlFetcher, HttpImageUrlFetcher>(client =>
+builder.Services.AddHttpClient<IImageUrlFetcher, HttpImageUrlFetcher>((sp, client) =>
 {
-    client.BaseAddress = new Uri("http://localhost:5290");
+    var cfg = sp.GetRequiredService<IConfiguration>();
+    client.BaseAddress = new Uri(cfg["MediaAccess:BaseUrl"]!);
 });
+
 builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
 builder.Services.AddScoped<IImageAnalyzer, GoogleVisionAnalyzer>();
-builder.Services.AddTransient<GoogleVisionAnalyzer>();
-builder.Services.AddScoped<IMachineReasoningAnalyzer, GeminiMachineAnalyzer>();
+builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
+builder.Services.AddHttpClient<GeminiMachineAnalyzer>();
+builder.Services.AddSingleton<IMachineReasoningAnalyzer, GeminiMachineAnalyzer>();
+builder.Services.AddSingleton<GeminiPromptLoader>();
 builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();

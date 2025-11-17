@@ -72,6 +72,10 @@ namespace svc_ai_vision_adapter.Application.Contracts
         public string? Brand { get; init; }
         public string? Type { get; init; }
         public string? Model { get; init; }
+        public double? Weight { get; init; }
+        public string? Year { get; init; }
+        public List<string>? Attachment { get; init; }
+
         public double Confidence { get; init; }
         public bool IsConfident { get; init; }
         public double? TypeConfidence { get; init; }
