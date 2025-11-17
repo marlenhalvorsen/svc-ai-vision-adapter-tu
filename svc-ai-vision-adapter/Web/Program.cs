@@ -15,6 +15,7 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka;
 using Confluent.Kafka;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using Microsoft.Extensions.Options;
+using Google.Api;
 
 
 
@@ -51,15 +52,19 @@ builder.Services.AddSingleton<IConsumer<string, byte[]>>(sp =>
 builder.Services.AddHostedService<RecognitionRequestedKafkaConsumer>();
 builder.Services.AddScoped<IRecognitionService, RecognitionService>();
 builder.Services.AddScoped<IRecognitionRequestedHandler, RecognitionRequestedHandler>();
-builder.Services.AddTransient<IImageUrlFetcher, HttpImageUrlFetcher>();
+builder.Services.AddHttpClient<IImageUrlFetcher, HttpImageUrlFetcher>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5290");
+});
 builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
+builder.Services.AddScoped<IImageAnalyzer, GoogleVisionAnalyzer>();
 builder.Services.AddTransient<GoogleVisionAnalyzer>();
 builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();
 builder.Services.AddSingleton<IResultShaper, GoogleResultShaper>();
 builder.Services.AddSingleton<IBrandCatalog>(sp =>
-    new JsonBrandCatalog(Path.Combine(AppContext.BaseDirectory, "Resources", "brands.json")));
+    new JsonBrandCatalog(Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Resources", "brands.json")));
 builder.Services.AddSingleton<IResultAggregator, ResultAggregatorService>();
 builder.Services.AddSingleton<IKafkaSerializer, JsonKafkaSerializer>();
 builder.Services.AddSingleton<IRecognitionCompletedPublisher, RecognitionCompletedKafkaProducer>();
