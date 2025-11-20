@@ -22,7 +22,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini.Prompt
         {
             return _promptTemplate
                 .Replace("{{brand}}", aggregate.Brand ?? "unknown")
-                .Replace("{{type}}", aggregate.MachineType ?? "unknown")
+                .Replace("{{machineType}}", aggregate.MachineType ?? "unknown")
                 .Replace("{{model}}", aggregate.Model ?? "unknown");
         }
     }

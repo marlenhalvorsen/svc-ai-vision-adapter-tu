@@ -22,5 +22,5 @@ RULES:
 Identify the following machine using extracted metadata:
 
 brand: {{brand}}
-type: {{type}}
+machine type: {{machineType}}
 model: {{model}}
