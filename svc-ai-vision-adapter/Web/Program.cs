@@ -66,7 +66,7 @@ builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
 builder.Services.AddScoped<IImageAnalyzer, GoogleVisionAnalyzer>();
 builder.Services.AddHttpClient<GeminiMachineAnalyzer>();
 builder.Services.AddSingleton<IMachineReasoningAnalyzer, GeminiMachineAnalyzer>();
-builder.Services.AddSingleton<GeminiPromptLoader>();
+builder.Services.AddSingleton<IPromptLoader, GeminiPromptLoader>();
 builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();
