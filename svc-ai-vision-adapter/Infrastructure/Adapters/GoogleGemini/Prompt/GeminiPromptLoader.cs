@@ -4,7 +4,7 @@ using svc_ai_vision_adapter.Infrastructure.Options;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini.Prompt
 {
-    internal sealed class GeminiPromptLoader
+    internal sealed class GeminiPromptLoader : IPromptLoader
     {
         private readonly string _promptTemplate;
         public GeminiPromptLoader(IOptions<GeminiOptions> opt)
@@ -22,7 +22,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini.Prompt
         {
             return _promptTemplate
                 .Replace("{{brand}}", aggregate.Brand ?? "unknown")
-                .Replace("{{type}}", aggregate.Type ?? "unknown")
+                .Replace("{{type}}", aggregate.MachineType ?? "unknown")
                 .Replace("{{model}}", aggregate.Model ?? "unknown");
         }
     }

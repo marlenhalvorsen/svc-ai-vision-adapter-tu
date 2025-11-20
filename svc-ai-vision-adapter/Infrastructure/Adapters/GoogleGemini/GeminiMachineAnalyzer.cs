@@ -13,9 +13,9 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini
     {
         private readonly HttpClient _http;
         private readonly GeminiOptions _opt;
-        private readonly GeminiPromptLoader _promptLoader;
+        private readonly IPromptLoader _promptLoader;
 
-        public GeminiMachineAnalyzer(HttpClient http, IOptions<GeminiOptions> opt, GeminiPromptLoader promptLoader)
+        public GeminiMachineAnalyzer(HttpClient http, IOptions<GeminiOptions> opt, IPromptLoader promptLoader)
         {
             _http = http;
             _opt = opt.Value;
@@ -44,7 +44,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini
                             new {
                                 text = prompt +
                                        $"\n\nbrand: {aggregate.Brand}\n" +
-                                       $"type: {aggregate.Type}\n" +
+                                       $"type: {aggregate.MachineType}\n" +
                                        $"model: {aggregate.Model}"
                             }
                         }
@@ -69,20 +69,30 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini
             var response = await _http.PostAsync(url, requestContent, ct);
             response.EnsureSuccessStatusCode();
 
-            // 5)deserialize
+            // 5) if schema is not accepted Gemini may return systemerror 
+            var raw = await response.Content.ReadAsStringAsync(ct);
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                throw new InvalidOperationException("Gemini returned no JSON text content.");
+            }
+
+            // 6)deserialize
             var json = await response.Content.ReadAsStringAsync(ct);
 
-            var parsed = JsonDocument.Parse(json);
-            var jsonText = parsed.RootElement
+            // 7)parse JSON material from Gemini
+            var root = JsonDocument.Parse(json).RootElement;
+            var jsonText = root
                 .GetProperty("candidates")[0]
                 .GetProperty("content")
-                .GetProperty("parts")[0]
+                .GetProperty("parts")
+                .EnumerateArray()
+                .First(p => p.TryGetProperty("text", out _))
                 .GetProperty("text")
                 .GetString();
 
             var geminiDto = JsonSerializer.Deserialize<GeminiResponseDto>(jsonText)!;
 
-            // 6) Map to internal aggregate
+            // 6) Map to internal aggregateDto
             return GeminiToAggregateMapper.Map(geminiDto);
         }
     }

@@ -45,7 +45,7 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
                 .ReturnsAsync(new MachineAggregateDto
                 {
                     Brand = "Caterpillar",
-                    Type = "Wheel Loader",
+                    MachineType = "Wheel Loader",
                     Model = "930G",
                     Confidence = 0.90,
                     IsConfident = true,

@@ -16,7 +16,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini
                 return new MachineAggregateDto
                 {
                     Brand = null,
-                    Type = null,
+                    MachineType = null,
                     Model = null,
                     Confidence = 0,
                     IsConfident = false,
@@ -26,7 +26,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini
             return new MachineAggregateDto
             {
                 Brand = response.Brand,
-                Type = response.MachineType,
+                MachineType = response.MachineType,
                 Model = response.Model,
                 Weight = response.Weight,
                 Year = response.Year,

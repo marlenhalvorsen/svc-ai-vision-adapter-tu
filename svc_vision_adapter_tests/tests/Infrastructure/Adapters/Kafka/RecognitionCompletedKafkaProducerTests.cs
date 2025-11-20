@@ -74,7 +74,7 @@ public class RecognitionCompletedKafkaProducerTests
             Aggregate: new()
             {
                 Brand = "Siemens",
-                Type = "CNC-Mill",
+                MachineType = "CNC-Mill",
                 Model = "X200",
                 Confidence = 0.92,
                 IsConfident = true,

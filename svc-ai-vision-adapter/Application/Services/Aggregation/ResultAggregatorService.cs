@@ -77,7 +77,7 @@ namespace svc_ai_vision_adapter.Application.Services.Aggregation
             if (list.Count == 0) return new MachineAggregateDto
             {
                 Brand = null,
-                Type = null,
+                MachineType = null,
                 Model = null,
                 Confidence = 0,
                 IsConfident = false,
@@ -105,7 +105,7 @@ namespace svc_ai_vision_adapter.Application.Services.Aggregation
             return new MachineAggregateDto
             {
                 Brand = brand,
-                Type = type,
+                MachineType = type,
                 Model = model,
                 Confidence = detectionConfidence,
                 IsConfident = isImageUsable,
