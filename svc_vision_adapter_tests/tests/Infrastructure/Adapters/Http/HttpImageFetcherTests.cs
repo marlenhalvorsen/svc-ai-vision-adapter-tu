@@ -129,7 +129,7 @@ public class HttpImageFetcherTests
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(req =>
                     req.Method == HttpMethod.Post &&
-                    req.RequestUri!.AbsolutePath == "/internal/v0/media/get-url"),
+                    req.RequestUri!.AbsolutePath == "/get-url"),
                 ItExpr.IsAny<CancellationToken>()
             )
             .ReturnsAsync(new HttpResponseMessage
@@ -156,7 +156,7 @@ public class HttpImageFetcherTests
             Times.Once(),
             ItExpr.Is<HttpRequestMessage>(req =>
                 req.Method == HttpMethod.Post &&
-                req.RequestUri!.AbsolutePath == "/internal/v0/media/get-url"),
+                req.RequestUri!.AbsolutePath == "/get-url"),
             ItExpr.IsAny<CancellationToken>()
         );
     }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
+using svc_ai_vision_adapter.Infrastructure.Options;
 using System.Text;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers

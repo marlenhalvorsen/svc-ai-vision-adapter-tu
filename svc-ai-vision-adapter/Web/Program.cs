@@ -11,24 +11,28 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.Http;
 using svc_ai_vision_adapter.Application.MessageHandling;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers;
-using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka;
 using Confluent.Kafka;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using Microsoft.Extensions.Options;
 using Google.Api;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini.Prompt;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+//load .env
+DotNetEnv.Env.Load();
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpClient();
 builder.Services.Configure<RecognitionOptions>(builder.Configuration.GetSection("Recognition"));
 builder.Services.Configure<KafkaConsumerOptions>(builder.Configuration.GetSection("Kafka:Consumer"));
 builder.Services.Configure<KafkaProducerOptions>(builder.Configuration.GetSection("Kafka:Producer"));
+builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
 
 //Dependency Injection
 //Kafka consumer as backgroundService
@@ -52,13 +56,17 @@ builder.Services.AddSingleton<IConsumer<string, byte[]>>(sp =>
 builder.Services.AddHostedService<RecognitionRequestedKafkaConsumer>();
 builder.Services.AddScoped<IRecognitionService, RecognitionService>();
 builder.Services.AddScoped<IRecognitionRequestedHandler, RecognitionRequestedHandler>();
-builder.Services.AddHttpClient<IImageUrlFetcher, HttpImageUrlFetcher>(client =>
+builder.Services.AddHttpClient<IImageUrlFetcher, HttpImageUrlFetcher>((sp, client) =>
 {
-    client.BaseAddress = new Uri("http://localhost:5290");
+    var cfg = sp.GetRequiredService<IConfiguration>();
+    client.BaseAddress = new Uri(cfg["MediaAccess:BaseUrl"]!);
 });
+
 builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
 builder.Services.AddScoped<IImageAnalyzer, GoogleVisionAnalyzer>();
-builder.Services.AddTransient<GoogleVisionAnalyzer>();
+builder.Services.AddHttpClient<GeminiMachineAnalyzer>();
+builder.Services.AddSingleton<IMachineReasoningAnalyzer, GeminiMachineAnalyzer>();
+builder.Services.AddSingleton<IPromptLoader, GeminiPromptLoader>();
 builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();
@@ -66,6 +74,7 @@ builder.Services.AddSingleton<IResultShaper, GoogleResultShaper>();
 builder.Services.AddSingleton<IBrandCatalog>(sp =>
     new JsonBrandCatalog(Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Resources", "brands.json")));
 builder.Services.AddSingleton<IResultAggregator, ResultAggregatorService>();
+builder.Services.AddSingleton<IReasoningProviderInfo>(sp => sp.GetRequiredService<IOptions<GeminiOptions>>().Value);
 builder.Services.AddSingleton<IKafkaSerializer, JsonKafkaSerializer>();
 builder.Services.AddSingleton<IRecognitionCompletedPublisher, RecognitionCompletedKafkaProducer>();
 builder.Services.AddSingleton<IProducer<string, byte[]>>(sp =>

@@ -5,6 +5,7 @@ using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Options;
+using svc_ai_vision_adapter.Application.Ports.Outbound;
 
 namespace svc_ai_vision_adapter.Application.Services
 {
@@ -16,7 +17,8 @@ namespace svc_ai_vision_adapter.Application.Services
     /// 1. What features to be applied
     /// 2. fetch bytes via IImageFetcher
     /// 3. sends pictures and features to analyzer. 
-    /// 4. Returns RecognitionResponseDto.
+    /// 4. Builds RecognitionResponseDto.
+    /// 5. Enrichs metadata with LLM response if EnableReasoning in options are true
     /// </summary>
     internal sealed class RecognitionService : IRecognitionService
     {
@@ -26,15 +28,20 @@ namespace svc_ai_vision_adapter.Application.Services
         private readonly IResultShaper _shaper;
         private readonly IImageUrlFetcher _urlFetcher;
         private readonly IImageAnalyzer _imageAnalyzer;
+        private readonly IMachineReasoningAnalyzer _machineReasoning;
+        private readonly IReasoningProviderInfo _reasoningProviderInfo;
+
 
 
         public RecognitionService(
-            IImageUrlFetcher imageUrlFetcher, 
-            IImageFetcher fetcher, 
-            IOptions<RecognitionOptions> opt, 
+            IImageUrlFetcher imageUrlFetcher,
+            IImageFetcher fetcher,
+            IOptions<RecognitionOptions> opt,
             IImageAnalyzer imageAnalyzer,
-            IResultShaper shaper, 
-            IResultAggregator aggregator)
+            IResultShaper shaper,
+            IResultAggregator aggregator,
+            IMachineReasoningAnalyzer machineReasoning,
+            IReasoningProviderInfo reasoningProviderInfo)
         {
             _urlFetcher = imageUrlFetcher;
             _fetcher = fetcher;
@@ -42,13 +49,15 @@ namespace svc_ai_vision_adapter.Application.Services
             _imageAnalyzer = imageAnalyzer;
             _aggregator = aggregator;
             _shaper = shaper;
+            _machineReasoning = machineReasoning;
+            _reasoningProviderInfo = reasoningProviderInfo;
         }
 
         public async Task<RecognitionResponseDto> AnalyzeAsync(
-            MessageKey request, 
+            MessageKey request,
             CancellationToken ct = default)
         {
-            //fech presigned urls
+            //fetch presigned urls
             var presignedUrls = await Task.WhenAll(
                 request.ObjectKeys.Select(k => _urlFetcher.FetchUrlAsync(k, ct))
             );
@@ -65,14 +74,17 @@ namespace svc_ai_vision_adapter.Application.Services
             var result = await _imageAnalyzer
                 .AnalyzeAsync(images, features, ct);
 
-            //shape and aggregate
+            //shape result 
             var compact = result
                 .Results
                 .Select(_shaper.Shape)
                 .ToList(); //shapes each result from the list to shapedResult
+
+            //aggregate the shaped result 
             var aggregate = _aggregator
                 .Aggregate(compact); //aggregate compact results
 
+            //builds RecognitionResponseDto
             var response = new RecognitionResponseDto(
                 Ai: result.Provider,
                 Metrics: result.InvocationMetrics,
@@ -83,7 +95,36 @@ namespace svc_ai_vision_adapter.Application.Services
                 Aggregate: aggregate
                 );
 
-            return response; 
+
+            //enable machineReasoning if true in appsettings
+            if (_opt.EnableReasoning)
+            {
+                var refined = await _machineReasoning.AnalyzeAsync(aggregate, ct);
+
+                //adding providerInfo
+                var provider = new AIProviderDto(
+                    Name: _reasoningProviderInfo.Name,           // fx "gemini"
+                    ApiVersion: _reasoningProviderInfo.Model,    // fx "gemini-1.5-pro"
+                    Featureset: new List<string> { "machine_reasoning" },
+                    MaxResults: null
+                );
+
+                // Opdater AI metadata med reasoning information
+                response = response with
+                {
+                    Aggregate = refined,
+                    Ai = response.Ai with
+                    {
+                        ReasoningName = provider.Name,
+                        ReasoningModel = provider.ApiVersion
+                    }
+                };
+
+                return response;
+            }
+
+            return response;
+
         }
     }
 }

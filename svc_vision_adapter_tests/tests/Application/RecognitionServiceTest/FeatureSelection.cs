@@ -2,11 +2,14 @@ using Microsoft.Extensions.Options;
 using Moq;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
-using svc_ai_vision_adapter.Application.Services;
+using svc_ai_vision_adapter.Application.Models;
 using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using svc_ai_vision_adapter.Application.Services;
+using svc_ai_vision_adapter.Application.Models;
+
 
 namespace svc_vision_adapter_tests.Application.RecognitionServiceTest;
 
@@ -23,6 +26,8 @@ public class FeatureSelection
         var shaper = Mock.Of<IResultShaper>();
         var aggregator = Mock.Of<IResultAggregator>();
         var publisher = Mock.Of<IRecognitionCompletedPublisher>();
+        var machineReasoner = Mock.Of<IMachineReasoningAnalyzer>();
+        var providerInfo = Mock.Of<IReasoningProviderInfo>();
 
         // fake image bytes
         fetcher.Setup(f => f.FetchAsync(
@@ -47,14 +52,15 @@ public class FeatureSelection
 
         var options = Options.Create(new RecognitionOptions { Features = new List<string>() });
 
-        // hvis din RecognitionService tager GoogleVisionAnalyzer direkte
         var service = new RecognitionService(
             urlFetcher.Object,
             fetcher.Object,
             options,
             analyzer.Object,
             shaper,
-            aggregator);
+            aggregator, 
+            machineReasoner,
+            providerInfo);
 
         var messageKey = new MessageKey(new List<string> { "img-001" }, "corr-123");
 

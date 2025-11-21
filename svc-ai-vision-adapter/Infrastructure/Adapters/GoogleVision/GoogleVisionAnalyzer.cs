@@ -2,6 +2,7 @@
 using Google.Protobuf;
 using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Models;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using System.Text.Json;
@@ -49,9 +50,6 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
                 var raw = JsonDocument.Parse(jsonFmt.Format(resp.Responses[i])).RootElement;
                 results.Add(new ProviderResultDto(images[i].Ref, raw));
             }
-
-
-
             var ai = new AIProviderDto(
             Name: "vision",
             ApiVersion: "v1",
