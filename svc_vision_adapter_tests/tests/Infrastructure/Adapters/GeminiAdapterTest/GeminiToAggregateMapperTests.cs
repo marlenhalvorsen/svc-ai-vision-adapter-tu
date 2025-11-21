@@ -115,5 +115,6 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
             // ASSERT
             Assert.IsTrue(result.IsConfident);
         }
+
     }
 }

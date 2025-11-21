@@ -82,13 +82,13 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
                 _promptMock.Object
             );
 
-            var dto = new MachineAggregateDto{ Brand = "Hitachi", MachineType = "Excavator", Model = "ZX35U" };
+            var dto = new MachineAggregateDto { Brand = "Hitachi", MachineType = "Excavator", Model = "ZX35U" };
 
             // ACT
             await analyzer.AnalyzeAsync(dto, CancellationToken.None);
 
             // ASSERT
-            _promptMock.Verify(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()), 
+            _promptMock.Verify(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()),
                 Times.Once);
             _promptMock.Verify(x => x.BuildPrompt(It.Is<MachineAggregateDto>(m =>
                             m.Brand == "Hitachi" &&
@@ -125,7 +125,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
                 _promptMock.Object
             );
 
-            var dto = new MachineAggregateDto{ Brand = "Hitachi", MachineType = "Mini", Model = "ZX35" };
+            var dto = new MachineAggregateDto { Brand = "Hitachi", MachineType = "Mini", Model = "ZX35" };
 
             // ACT
             var result = await analyzer.AnalyzeAsync(dto, CancellationToken.None);
@@ -189,11 +189,177 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
                 _promptMock.Object
             );
 
-            var dto = new MachineAggregateDto{Brand = "Brand", MachineType = "MachineType", Model = "Model" };
+            var dto = new MachineAggregateDto { Brand = "Brand", MachineType = "MachineType", Model = "Model" };
 
             // ACT + ASSERT
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await analyzer.AnalyzeAsync(dto, CancellationToken.None));
         }
+        [TestMethod]
+        public async Task AnalyzeAsync_LoadsSchemaFileSuccessfully()
+        {
+            // ARRANGE
+            var tempPath = Path.GetTempFileName();
+            await File.WriteAllTextAsync(tempPath, "{ \"type\": \"object\" }");
+
+            var options = new GeminiOptions
+            {
+                ApiKey = "dummy",
+                Model = "test-model",
+                SchemaPath = tempPath
+            };
+
+            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+                       .Returns("PROMPT");
+
+            var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("""
+                {
+                  "candidates": [{
+                    "content": {
+                      "parts": [ { "text": "{\"brand\":\"Hitachi\"}" } ]
+                    }
+                  }]
+                }
+                """, Encoding.UTF8, "application/json")
+            });
+
+            var analyzer = new GeminiMachineAnalyzer(
+                http,
+                Options.Create(options),
+                _promptMock.Object
+            );
+
+            var dto = new MachineAggregateDto();
+
+            // ACT — Should not throw
+            var result = await analyzer.AnalyzeAsync(dto, CancellationToken.None);
+
+            // ASSERT
+            Assert.AreEqual("Hitachi", result.Brand);
+        }
+        [TestMethod]
+        public async Task AnalyzeAsync_ThrowsIfSchemaFileMissing()
+        {
+            // ARRANGE
+            var options = new GeminiOptions
+            {
+                ApiKey = "dummy",
+                Model = "test-model",
+                SchemaPath = "THIS_FILE_DOES_NOT_EXIST.json"
+            };
+
+            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+                       .Returns("PROMPT");
+
+            var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK));
+
+            var analyzer = new GeminiMachineAnalyzer(
+                http,
+                Options.Create(options),
+                _promptMock.Object
+            );
+
+            var dto = new MachineAggregateDto();
+
+            // ACT + ASSERT
+            await Assert.ThrowsExceptionAsync<FileNotFoundException>(async () =>
+                await analyzer.AnalyzeAsync(dto, CancellationToken.None));
+        }
+
+
+        [TestMethod]
+        public async Task AnalyzeAsync_MapsRefusalCorrectly()
+        {
+            // ARRANGE
+            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+                       .Returns("PROMPT");
+
+            var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("""
+                {
+                  "candidates": [{
+                    "content": {
+                      "parts": [
+                        { "text": "{\"status\":\"refusal\",\"reason\":\"not enough info\"}" }
+                      ]
+                    }
+                  }]
+                }
+                """, Encoding.UTF8, "application/json")
+            });
+
+            var analyzer = new GeminiMachineAnalyzer(
+                http,
+                Options.Create(_opt),
+                _promptMock.Object
+            );
+
+            // ACT
+            var result = await analyzer.AnalyzeAsync(
+                new MachineAggregateDto(), CancellationToken.None);
+
+            // ASSERT
+            Assert.IsNull(result.Brand);
+            Assert.IsNull(result.MachineType);
+            Assert.IsNull(result.Model);
+            Assert.AreEqual(0, result.Confidence);
+            Assert.IsFalse(result.IsConfident);
+            Assert.AreEqual("not enough info", result.TypeSource);
+        }
+        [TestMethod]
+        public async Task AnalyzeAsync_ThrowsIfCandidatesMissing()
+        {
+            // ARRANGE
+            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+                       .Returns("PROMPT");
+
+            //empty json output from Gemini
+            var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            });
+
+            var analyzer = new GeminiMachineAnalyzer(
+                http,
+                Options.Create(_opt),
+                _promptMock.Object
+            );
+
+            // ACT + ASSERT
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () =>
+                await analyzer.AnalyzeAsync(new MachineAggregateDto(), CancellationToken.None));
+        }
+        [TestMethod]
+        public async Task AnalyzeAsync_ThrowsIfPartsArrayEmpty()
+        {
+            // ARRANGE
+            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+                       .Returns("PROMPT");
+
+            var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("""
+                {
+                  "candidates": [{
+                    "content": { "parts": [] }
+                  }]
+                }
+                """, Encoding.UTF8, "application/json")
+            });
+
+            var analyzer = new GeminiMachineAnalyzer(
+                http,
+                Options.Create(_opt),
+                _promptMock.Object
+            );
+
+            // ACT + ASSERT
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
+                await analyzer.AnalyzeAsync(new MachineAggregateDto(), CancellationToken.None));
+        }
+
     }
 }
