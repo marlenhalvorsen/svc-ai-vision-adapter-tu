@@ -3,7 +3,7 @@
 **Version:** Draft v0 (unfrozen)  
 **Last updated:** 2025-11-12  
 **Owner:** Trackunit AI Vision Adapter Service  
-**Status:** Draft – breaking changes allowed until v1  
+**Status:** v1 – Frozen (breaking changes require new schema version)
 
 ---
 
@@ -24,7 +24,7 @@ Signals that image analysis and aggregation have finished, and the resulting mac
 ## Headers  
 | Header | Example | Description |
 |---------|----------|-------------|
-| x-schema | recognition.completed.v0 | Schema version identifier |
+| x-schema | recognition.completed.v1 | Schema version identifier |
 | x-producer | svc-ai-vision-adapter | Originating service |
 | x-correlation-id | 1f9f7f4c-a8b4-4e21-b0a2-b23fd4e98311 | Propagated correlation ID for traceability |
 
@@ -83,10 +83,11 @@ Signals that image analysis and aggregation have finished, and the resulting mac
 ---
 
 ## Changelog
-| Date | Version | Notes |
-|------|----------|-------|
-| 2025-11-12 | v0 | Initial draft version matching producer `RecognitionCompletedKafkaProducer` |
-| 2025-11-17 | v0 | Updated example payload to reflect Gemini-enhanced MachineAggregateDto (weight, year, attachment, typeSource) |
+| Date        | Version | Notes |
+|-------------|---------|-------|
+| 2025-11-12  | v0      | Initial draft version |
+| 2025-11-17  | v0      | Updated example payload to match Gemini pipeline |
+| 2025-11-18  | v1      | Frozen, stable production version. No breaking changes allowed. |
 
 ---
 
