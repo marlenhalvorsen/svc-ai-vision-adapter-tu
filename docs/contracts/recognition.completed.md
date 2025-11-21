@@ -1,4 +1,4 @@
-﻿# Messaging Contract – RecognitionCompleted (v0)
+﻿# Messaging Contract – RecognitionCompleted (v1)
 
 **Version:** v1 (frozen)  
 **Last updated:** 2025-11-21  
