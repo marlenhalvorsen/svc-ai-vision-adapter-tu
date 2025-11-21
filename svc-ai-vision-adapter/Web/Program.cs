@@ -74,6 +74,7 @@ builder.Services.AddSingleton<IResultShaper, GoogleResultShaper>();
 builder.Services.AddSingleton<IBrandCatalog>(sp =>
     new JsonBrandCatalog(Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Resources", "brands.json")));
 builder.Services.AddSingleton<IResultAggregator, ResultAggregatorService>();
+builder.Services.AddSingleton<IReasoningProviderInfo>(sp => sp.GetRequiredService<IOptions<GeminiOptions>>().Value);
 builder.Services.AddSingleton<IKafkaSerializer, JsonKafkaSerializer>();
 builder.Services.AddSingleton<IRecognitionCompletedPublisher, RecognitionCompletedKafkaProducer>();
 builder.Services.AddSingleton<IProducer<string, byte[]>>(sp =>

@@ -4,54 +4,61 @@
   "title": "RecognitionCompletedEvent",
   "type": "object",
 
-  "provider": {
-    "type": "object",
-    "description": "Metadata about the AI pipeline used to classify the machine.",
-    "properties": {
-      "name": { "type": "string" },
-      "model": { "type": "string" },
-      "features": {
-        "type": "array",
-        "items": { "type": "string" }
+  "properties": {
+    "provider": {
+      "type": "object",
+      "description": "Metadata about the AI pipeline used to classify the machine.",
+      "properties": {
+        "name": { "type": "string" },
+        "model": { "type": "string" },
+        "features": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "region": { "type": "string" },
+        "reasoningName": { "type": "string" },
+        "reasoningModel": { "type": "string" }
       },
-      "region": { "type": "string" },
-      "reasoningName": { "type": "string" },
-      "reasoningModel": { "type": "string" }
+      "required": [ "name" ]
     },
-    "required": [ "name" ]
-  },
 
-  "aggregate": {
-    "type": "object",
-    "description": "Final aggregated classification result for the machine.",
-    "properties": {
-      "brand": { "type": "string" },
-      "machineType": { "type": "string" },
-      "model": { "type": "string" },
-      "weight": {
-        "type": "number",
-        "minimum": 0
+    "aggregate": {
+      "type": "object",
+      "description": "Final aggregated classification result for the machine.",
+      "properties": {
+        "brand": { "type": "string" },
+        "machineType": { "type": "string" },
+        "model": { "type": "string" },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        },
+        "year": {
+          "type": "string",
+          "maxLength": 20,
+          "pattern": "^[0-9]{4}(–[0-9]{4})?$"
+        },
+        "attachment": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "isConfident": { "type": "boolean" },
+        "typeSource": { "type": "string" }
       },
-      "year": {
-        "type": "string",
-        "maxLength": 20,
-        "pattern": "^[0-9]{4}(–[0-9]{4})?$"
-      },
-      "attachment": {
-        "type": "array",
-        "items": { "type": "string" }
-      },
-      "confidence": {
-        "type": "number",
-        "minimum": 0,
-        "maximum": 1
-      },
-      "isConfident": { "type": "boolean" },
-      "typeSource": { "type": "string" }
-    },
-    "required": [ "brand", "machineType", "model", "confidence", "isConfident" ]
-  }
-},
+      "required": [
+        "brand",
+        "machineType",
+        "model",
+        "confidence",
+        "isConfident"
+      ]
+    }
+  },
 
   "required": [ "provider", "aggregate" ]
 }
