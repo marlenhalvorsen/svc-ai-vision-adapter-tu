@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/maha63312/svc-ai-vision-adapter/main/docs/schemas/recognition.completed.v1.json",
+  "title": "RecognitionCompletedEvent",
+  "type": "object",
+
+  "properties": {
+    "provider": {
+      "type": "object",
+      "description": "Metadata about the AI provider and configuration used.",
+      "properties": {
+        "name": { "type": "string" },
+        "model": { "type": "string" },
+        "features": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "region": { "type": "string" }
+      },
+      "required": [ "name", "model" ]
+    },
+
+    "aggregate": {
+      "type": "object",
+      "description": "Final aggregated classification result for the machine.",
+      "properties": {
+        "brand": { "type": "string" },
+        "machineType": { "type": "string" },
+        "model": { "type": "string" },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        },
+        "year": {
+          "type": "string",
+          "maxLength": 20,
+          "pattern": "^[0-9]{4}(–[0-9]{4})?$"
+        },
+        "attachment": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "isConfident": { "type": "boolean" },
+        "typeSource": { "type": "string" }
+      },
+      "required": [ "brand", "machineType", "model", "confidence", "isConfident" ]
+    }
+  },
+
+  "required": [ "provider", "aggregate" ]
+}

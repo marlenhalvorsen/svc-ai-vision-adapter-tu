@@ -29,16 +29,19 @@ namespace svc_ai_vision_adapter.Application.Services
         private readonly IImageUrlFetcher _urlFetcher;
         private readonly IImageAnalyzer _imageAnalyzer;
         private readonly IMachineReasoningAnalyzer _machineReasoning;
+        private readonly IReasoningProviderInfo _reasoningProviderInfo;
+
 
 
         public RecognitionService(
-            IImageUrlFetcher imageUrlFetcher, 
-            IImageFetcher fetcher, 
-            IOptions<RecognitionOptions> opt, 
+            IImageUrlFetcher imageUrlFetcher,
+            IImageFetcher fetcher,
+            IOptions<RecognitionOptions> opt,
             IImageAnalyzer imageAnalyzer,
-            IResultShaper shaper, 
+            IResultShaper shaper,
             IResultAggregator aggregator,
-            IMachineReasoningAnalyzer machineReasoning)
+            IMachineReasoningAnalyzer machineReasoning,
+            IReasoningProviderInfo reasoningProviderInfo)
         {
             _urlFetcher = imageUrlFetcher;
             _fetcher = fetcher;
@@ -47,10 +50,11 @@ namespace svc_ai_vision_adapter.Application.Services
             _aggregator = aggregator;
             _shaper = shaper;
             _machineReasoning = machineReasoning;
+            _reasoningProviderInfo = reasoningProviderInfo;
         }
 
         public async Task<RecognitionResponseDto> AnalyzeAsync(
-            MessageKey request, 
+            MessageKey request,
             CancellationToken ct = default)
         {
             //fetch presigned urls
@@ -96,11 +100,31 @@ namespace svc_ai_vision_adapter.Application.Services
             if (_opt.EnableReasoning)
             {
                 var refined = await _machineReasoning.AnalyzeAsync(aggregate, ct);
-                //enrich machineAggregate with response from LLM
-                response = response with { Aggregate = refined };
+
+                //adding providerInfo
+                var provider = new AIProviderDto(
+                    Name: _reasoningProviderInfo.Name,           // fx "gemini"
+                    ApiVersion: _reasoningProviderInfo.Model,    // fx "gemini-1.5-pro"
+                    Featureset: new List<string> { "machine_reasoning" },
+                    MaxResults: null
+                );
+
+                // Opdater AI metadata med reasoning information
+                response = response with
+                {
+                    Aggregate = refined,
+                    Ai = response.Ai with
+                    {
+                        ReasoningName = provider.Name,
+                        ReasoningModel = provider.ApiVersion
+                    }
+                };
+
+                return response;
             }
 
-            return response; 
+            return response;
+
         }
     }
 }

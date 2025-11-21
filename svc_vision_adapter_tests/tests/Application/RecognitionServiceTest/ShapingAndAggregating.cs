@@ -25,6 +25,7 @@ public class ShapingAndAggregating
         var aggregator = new Mock<IResultAggregator>();
         var publisher = new Mock<IRecognitionCompletedPublisher>();
         var machineReasoner = new Mock<IMachineReasoningAnalyzer>();
+        var providerInfo = Mock.Of<IReasoningProviderInfo>();
 
         var options = Options.Create(new RecognitionOptions
         {
@@ -74,7 +75,8 @@ public class ShapingAndAggregating
             analyzer.Object,
             shaper.Object,
             aggregator.Object,
-            machineReasoner.Object
+            machineReasoner.Object,
+            providerInfo
             );
 
         // MessageKey now represents event with multiple images

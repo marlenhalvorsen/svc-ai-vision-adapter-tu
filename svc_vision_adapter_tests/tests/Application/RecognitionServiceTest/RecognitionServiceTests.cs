@@ -24,6 +24,7 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
             var fakeUrlFetcher = new FakeImageUrlFetcher();
             var fakeFetcher = new FakeImageFetcher();
             var fakeAnalyzer = new FakeImageAnalyzer();
+            var providerInfo = Mock.Of<IReasoningProviderInfo>();
 
             var options = Options.Create(new RecognitionOptions
             {
@@ -59,7 +60,8 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
                 fakeAnalyzer,
                 shaper,
                 aggregator,
-                _fakeReasoner.Object
+                _fakeReasoner.Object,
+                providerInfo
             );
         }
 

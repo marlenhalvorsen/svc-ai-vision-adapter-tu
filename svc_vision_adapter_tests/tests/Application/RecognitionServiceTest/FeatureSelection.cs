@@ -27,6 +27,7 @@ public class FeatureSelection
         var aggregator = Mock.Of<IResultAggregator>();
         var publisher = Mock.Of<IRecognitionCompletedPublisher>();
         var machineReasoner = Mock.Of<IMachineReasoningAnalyzer>();
+        var providerInfo = Mock.Of<IReasoningProviderInfo>();
 
         // fake image bytes
         fetcher.Setup(f => f.FetchAsync(
@@ -51,7 +52,6 @@ public class FeatureSelection
 
         var options = Options.Create(new RecognitionOptions { Features = new List<string>() });
 
-        // hvis din RecognitionService tager GoogleVisionAnalyzer direkte
         var service = new RecognitionService(
             urlFetcher.Object,
             fetcher.Object,
@@ -59,7 +59,8 @@ public class FeatureSelection
             analyzer.Object,
             shaper,
             aggregator, 
-            machineReasoner);
+            machineReasoner,
+            providerInfo);
 
         var messageKey = new MessageKey(new List<string> { "img-001" }, "corr-123");
 

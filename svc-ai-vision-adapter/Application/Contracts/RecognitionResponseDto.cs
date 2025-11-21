@@ -17,7 +17,9 @@ namespace svc_ai_vision_adapter.Application.Contracts
         string Name, 
         string? ApiVersion, 
         IReadOnlyList<string> Featureset,
-        int? MaxResults = null);
+        int? MaxResults = null,
+        string? ReasoningName = null,
+        string? ReasoningModel = null);
 
     /// <summary>
     /// provides visibility that can be used for performance monitoring and troubleshooting

@@ -25,6 +25,7 @@ public class ImageFetching
         var aggregator = Mock.Of<IResultAggregator>();
         var publisher = Mock.Of<IRecognitionCompletedPublisher>();
         var machineReasoner = Mock.Of<IMachineReasoningAnalyzer>();
+        var providerInfo = Mock.Of<IReasoningProviderInfo>();
 
         //Simulate URL fetcher returning presigned URLs
         urlFetcher.Setup(f => f.FetchUrlAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -62,7 +63,8 @@ public class ImageFetching
             analyzer.Object,
             shaper,
             aggregator,
-            machineReasoner);
+            machineReasoner,
+            providerInfo);
 
         //Two images represented as object keys
         var messageKey = new MessageKey(
