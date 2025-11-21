@@ -57,7 +57,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Http
                     string.Equals(mediaType, "application/octet-stream", StringComparison.Ordinal);
 
                 if (!isImageLike)
-                    throw new InvalidOperationException($"Not an image (Content-Type={mediaType ?? "null"}): {img.Url}");
+                    throw new InvalidOperationException($"Not an image (Content-MachineType={mediaType ?? "null"}): {img.Url}");
 
                 // check length
                 if (resp.Content.Headers.ContentLength is long len && len > MaxBytes)

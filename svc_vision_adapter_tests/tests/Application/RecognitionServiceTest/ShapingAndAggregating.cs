@@ -1,5 +1,6 @@
 using Moq;
 using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Models;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services;
 using svc_ai_vision_adapter.Application.Services.Shaping;
@@ -23,6 +24,8 @@ public class ShapingAndAggregating
         var shaper = new Mock<IResultShaper>();
         var aggregator = new Mock<IResultAggregator>();
         var publisher = new Mock<IRecognitionCompletedPublisher>();
+        var machineReasoner = new Mock<IMachineReasoningAnalyzer>();
+        var providerInfo = Mock.Of<IReasoningProviderInfo>();
 
         var options = Options.Create(new RecognitionOptions
         {
@@ -71,7 +74,10 @@ public class ShapingAndAggregating
             options,
             analyzer.Object,
             shaper.Object,
-            aggregator.Object);
+            aggregator.Object,
+            machineReasoner.Object,
+            providerInfo
+            );
 
         // MessageKey now represents event with multiple images
         var key = new MessageKey(

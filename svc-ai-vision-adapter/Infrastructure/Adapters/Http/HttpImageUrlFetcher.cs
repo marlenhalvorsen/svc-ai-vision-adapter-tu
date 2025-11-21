@@ -9,7 +9,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Http
         {
             //mapping from internal model to external api-model
             var request = new GetUrlRequest(objectKey);
-            var response = await http.PostAsJsonAsync("/internal/v0/media/get-url", request, ct);
+            var response = await http.PostAsJsonAsync("/get-url", request, ct);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<GetUrlResponse>(cancellationToken: ct);

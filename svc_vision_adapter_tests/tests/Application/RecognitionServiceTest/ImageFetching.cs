@@ -1,5 +1,6 @@
 using Moq;
 using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Models;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services;
 using svc_ai_vision_adapter.Application.Services.Shaping;
@@ -16,23 +17,27 @@ public class ImageFetching
     [TestMethod]
     public async Task WhenImageFetcher_IsCalled_ReturnsImages()
     {
-        // ARRANGE
+        //ARRANGE
         var urlFetcher = new Mock<IImageUrlFetcher>();
         var fetcher = new Mock<IImageFetcher>();
         var analyzer = new Mock<IImageAnalyzer>();
         var shaper = Mock.Of<IResultShaper>();
         var aggregator = Mock.Of<IResultAggregator>();
         var publisher = Mock.Of<IRecognitionCompletedPublisher>();
+        var machineReasoner = Mock.Of<IMachineReasoningAnalyzer>();
+        var providerInfo = Mock.Of<IReasoningProviderInfo>();
 
-        // Simulate URL fetcher returning presigned URLs
+        //Simulate URL fetcher returning presigned URLs
         urlFetcher.Setup(f => f.FetchUrlAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync("https://example.com/image.jpg");
 
-        // Simulate image fetcher returning fake bytes for each image
+        //Simulate image fetcher returning fake bytes for each image
+
         fetcher.Setup(f => f.FetchAsync(It.IsAny<ImageRefDto>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((new ImageRefDto("https://example.com/image.jpg"), new byte[] { 1, 2, 3 }));
 
-        // Minimal fake analyzer result
+        //Minimal fake analyzer result
+
         analyzer.Setup(a => a.AnalyzeAsync(
                 It.IsAny<IReadOnlyList<(ImageRefDto Ref, byte[] Bytes)>>(),
                 It.IsAny<IReadOnlyList<string>>(),
@@ -50,16 +55,18 @@ public class ImageFetching
 
         var options = Options.Create(new RecognitionOptions { Features = new List<string>() });
 
-        // RecognitionService signature
+        //RecognitionService signature
         var service = new RecognitionService(
             urlFetcher.Object,
             fetcher.Object,
             options,
             analyzer.Object,
             shaper,
-            aggregator);
+            aggregator,
+            machineReasoner,
+            providerInfo);
 
-        // Two images represented as object keys
+        //Two images represented as object keys
         var messageKey = new MessageKey(
             new List<string> { "img-001", "img-002" },
             CorrelationId: "corr-001");
@@ -67,7 +74,7 @@ public class ImageFetching
         // ACT
         await service.AnalyzeAsync(messageKey, CancellationToken.None);
 
-        // ASSERT
+        //ASSERT
         fetcher.Verify(f => f.FetchAsync(
             It.IsAny<ImageRefDto>(),
             It.IsAny<CancellationToken>()),

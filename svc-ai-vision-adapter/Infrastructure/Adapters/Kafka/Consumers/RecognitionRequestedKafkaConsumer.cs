@@ -11,6 +11,19 @@ using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
+using svc_ai_vision_adapter.Infrastructure.Options;
+// This class is the Kafka consumer adapter.
+// It runs in the background (via BackgroundService) and listens to a Kafka topic
+// for "RecognitionRequested" events.
+// For each message:
+//   1. Read the raw Kafka message (objectKey)
+//   2. Deserialize it into ImageUploadedEvent (external contract / wire model)
+//   3. Map it into RecognitionRequestDto (our internal request DTO)
+//   4. Call the application layer via IRecognitionRequestedHandler
+// IMPORTANT ARCHITECTURE POINTS:
+// - This class lives in Infrastructure because it talks directly to Kafka.
+// - It depends on Application only through the port IRecognitionRequestedHandler.
+//   Application does NOT depend on this class. That keeps the direction of dependencies clean.
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers
 {
     internal sealed class RecognitionRequestedKafkaConsumer : BackgroundService
@@ -18,19 +31,19 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Consumers
         private readonly ILogger<RecognitionRequestedKafkaConsumer> _logger;
         private readonly IConsumer<string, byte[]> _consumer;
         private readonly IKafkaSerializer _serializer;
-        private readonly IServiceScopeFactory _scopeFactory;   // <-- FIX
+        private readonly IServiceScopeFactory _scopeFactory;   
         private readonly KafkaConsumerOptions _options;
 
         public RecognitionRequestedKafkaConsumer(
             ILogger<RecognitionRequestedKafkaConsumer> logger,
             IKafkaSerializer serializer,
-            IServiceScopeFactory scopeFactory,                 // <-- FIX
+            IServiceScopeFactory scopeFactory,                
             IOptions<KafkaConsumerOptions> options,
             IConsumer<string, byte[]> consumer)
         {
             _logger = logger;
             _serializer = serializer;
-            _scopeFactory = scopeFactory;                     // <-- FIX
+            _scopeFactory = scopeFactory;                     
             _options = options.Value;
             _consumer = consumer;
         }

@@ -1,0 +1,30 @@
+﻿{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\n  \"status\": \"success\",\n  \"attachment\": [\"Bucket\", \"Forks\", \"Material handling arm\"],\n  \"brand\": \"Caterpillar\",\n  \"commentary\": \"The 930G is a well-known mid-sized wheel loader from Caterpillar, recognized for its versatility in various material handling applications.\",\n  \"confidence\": 0.95,\n  \"machineType\": \"Wheel Loader\",\n  \"model\": \"930G\",\n  \"partial\": false,\n  \"source\": \"Model number lookup for '930G' identifies a specific Caterpillar machine.\",\n  \"weight\": 14500,\n  \"year\": \"1997-2003\"\n}"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 172,
+    "candidatesTokenCount": 163,
+    "totalTokenCount": 658,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 172
+      }
+    ],
+    "thoughtsTokenCount": 323
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "s-IWaZKyN-b6nsEP9dabkA0"
+}
