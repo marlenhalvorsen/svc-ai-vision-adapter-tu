@@ -103,13 +103,13 @@ namespace svc_ai_vision_adapter.Application.Services
 
                 //adding providerInfo
                 var provider = new AIProviderDto(
-                    Name: _reasoningProviderInfo.Name,           // fx "gemini"
-                    ApiVersion: _reasoningProviderInfo.Model,    // fx "gemini-1.5-pro"
+                    Name: _reasoningProviderInfo.Name,           
+                    ApiVersion: _reasoningProviderInfo.Model,   
                     Featureset: new List<string> { "machine_reasoning" },
                     MaxResults: null
                 );
 
-                // Opdater AI metadata med reasoning information
+                // update AI metadata with reasoning information
                 response = response with
                 {
                     Aggregate = refined,
