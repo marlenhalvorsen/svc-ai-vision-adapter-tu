@@ -8,6 +8,7 @@ using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 using System.Text.Json;
+using svc_ai_vision_adapter.Application.Transport;
 
 namespace svc_ai_vision_adapter_tests;
 
@@ -62,14 +63,13 @@ public class RecognitionCompletedKafkaProducerTests
             )
             },
             CorrelationId: "abc123",
-            ObjectKeys: new List<string> { "img-001" },  
+            ObjectKey: "img-001",  
             Compact: new List<ShapedResultDto>
             {
             new(
                 new("img-001"),
                 new("Siemens", "CNC-Mill", "X200", 0.9, true),
-                new("Dumper", "Hitatchi", "DUMP", null, null, null),
-                Array.Empty<ObjectHitDto>())
+                new("Dumper", "Hitatchi", "DUMP", null, null))
             },
             Aggregate: new()
             {

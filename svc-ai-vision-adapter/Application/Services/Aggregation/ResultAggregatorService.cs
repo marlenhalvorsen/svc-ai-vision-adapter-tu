@@ -1,4 +1,6 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Models;
+using svc_ai_vision_adapter.Application.Transport;
 using System.Text.RegularExpressions;
 
 namespace svc_ai_vision_adapter.Application.Services.Aggregation
@@ -13,7 +15,7 @@ namespace svc_ai_vision_adapter.Application.Services.Aggregation
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         static readonly Regex LettersFirst = new(@"\b[A-Z]{1,3}[ \t-]?\d{2,4}(?:-\d{1,2})?[A-Z]{0,2}\b",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-
+        
         static readonly HashSet<string> Canonical = new(StringComparer.OrdinalIgnoreCase)
         {
             "Wheel Loader", "Loader",
@@ -40,32 +42,13 @@ namespace svc_ai_vision_adapter.Application.Services.Aggregation
                 return (matchedType, entityHit.Score, "web_entity");
             }
 
-            //Checks for canonical types among objects
-            const double objMinScore = 0.5;
-            var objType = list
-               .SelectMany(x => x.Evidence.Objects ?? Array.Empty<ObjectHitDto>())
-               .Where(o => o.Score >= objMinScore)
-               .Select(o => new
-               {
-                   o.Score,
-                   Match = Canonical.FirstOrDefault(t =>
-               o.Name.IndexOf(t, StringComparison.OrdinalIgnoreCase) >= 0)
-               })
-               .Where(x => x.Match is not null)
-               .OrderByDescending(x => x.Score)
-               .FirstOrDefault();
-
-            if (objType is not null)
-                return (objType.Match, objType.Score, "object_localization");
-
-            //if webentity or object is not found check for best label, then mark as web_best_guess
+            //if webentity is not found check for best label, then mark as web_best_guess
             var bestGuess = (list.Select(x => x.Evidence.WebBestGuess)
                 .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s)) ?? "")
                 .ToLowerInvariant();
             foreach (var t in Canonical)
                 if (bestGuess.Contains(t.ToLowerInvariant()))
                     return (t, null, "web_best_guess");
-
 
             // C) else return null
             return (null, null, null);

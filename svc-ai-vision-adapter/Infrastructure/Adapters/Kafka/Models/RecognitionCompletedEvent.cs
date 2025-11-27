@@ -12,7 +12,9 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models
         //where all fields of MachineAggregateDto would be lost
         public MachineAggregateDto Aggregate { get; init; } = default!;
 
-        public RecognitionCompletedEvent(AIProviderDto provider, MachineAggregateDto aggregate)
+        public RecognitionCompletedEvent(
+            AIProviderDto provider, 
+            MachineAggregateDto aggregate)
         {
             Provider = provider;
             Aggregate = aggregate;

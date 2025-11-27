@@ -90,7 +90,11 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini
                 .GetProperty("text")
                 .GetString();
 
-            var geminiDto = JsonSerializer.Deserialize<GeminiResponseDto>(jsonText)!;
+            if (jsonText is null)
+                throw new InvalidOperationException("Gemini returned an unexpected response without 'text'.");
+
+            var geminiDto = JsonSerializer.Deserialize<GeminiResponseDto>(jsonText)
+                             ?? throw new InvalidOperationException("Could not parse Gemini JSON into DTO.");
 
             // 6) Map to internal aggregateDto
             return GeminiToAggregateMapper.Map(geminiDto);
