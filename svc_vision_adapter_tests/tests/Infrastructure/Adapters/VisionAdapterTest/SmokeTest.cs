@@ -3,7 +3,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services.Aggregation;
+using svc_ai_vision_adapter.Application.Transport;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Parsing;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Resolvers;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using System.Text.Json;
 
@@ -12,7 +15,7 @@ namespace tests.Infrastructure.Adapters.VisionAdapterTest
     [TestClass]
     public class GoogleResultShaperSmokeTests
     {
-        public TestContext TestContext { get; set; }
+        public TestContext? TestContext { get; set; }
 
         [TestMethod]
         public void Dump_from_fixture()
@@ -23,6 +26,9 @@ namespace tests.Infrastructure.Adapters.VisionAdapterTest
                 "tests", "Infrastructure", "Adapters", "VisionAdapterTest", "TestData", "GoogleVisionSample3.json");
 
             var fakeBrands = new MockBrandCatalog(new[] { "Hitachi", "Volvo", "CAT" });
+            var parser = new GoogleVisionParser();
+            var brandResolver = new BrandResolver();
+            var typeResolver = new TypeResolver(fakeBrands);
 
             Assert.IsTrue(File.Exists(path), $"Mangler testdata: {path}");
 
@@ -41,13 +47,13 @@ namespace tests.Infrastructure.Adapters.VisionAdapterTest
 
             // ACT
             var prov = new ProviderResultDto(new ImageRefDto("https://example/img.png"), raw);
-            var shaped = new GoogleResultShaper(options, fakeBrands).Shape(prov);
+            var shaped = new GoogleResultShaper(options, fakeBrands, parser, brandResolver, typeResolver).Shape(prov);
             var aggregate = new ResultAggregatorService(0.70).Aggregate(new List<ShapedResultDto> { shaped });
 
             var pretty = JsonSerializer.Serialize(new { shaped, aggregate }, new JsonSerializerOptions { WriteIndented = true });
 
             // OUTPUT
-            TestContext.WriteLine(pretty);
+            TestContext?.WriteLine(pretty);
         }
 
         private class MockBrandCatalog : IBrandCatalog

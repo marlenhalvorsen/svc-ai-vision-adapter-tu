@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
-using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
+using svc_ai_vision_adapter.Application.Transport;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.Http
 {

@@ -3,9 +3,8 @@ using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Inbound;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Application.Services.Shaping;
-using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
+using svc_ai_vision_adapter.Application.Transport;
 using svc_ai_vision_adapter.Infrastructure.Options;
-using svc_ai_vision_adapter.Application.Ports.Outbound;
 
 namespace svc_ai_vision_adapter.Application.Services
 {
@@ -58,14 +57,12 @@ namespace svc_ai_vision_adapter.Application.Services
             CancellationToken ct = default)
         {
             //fetch presigned urls
-            var presignedUrls = await Task.WhenAll(
-                request.ObjectKeys.Select(k => _urlFetcher.FetchUrlAsync(k, ct))
-            );
+            var presignedUrls = await _urlFetcher.FetchUrlAsync(request.ObjectKey, ct);
 
             //fetch images via presigned urls
-            var images = await Task.WhenAll(
-                presignedUrls.Select(url => _fetcher.FetchAsync(new ImageRefDto(url), ct))
-            );
+            var url = await _urlFetcher.FetchUrlAsync(request.ObjectKey, ct);
+            var image = await _fetcher.FetchAsync(new ImageRefDto(url), ct);
+            var images = new List<(ImageRefDto Ref, byte[] Bytes)> { image };
 
             //find server configured features
             var features = _opt.Features ?? new List<string>();
@@ -90,7 +87,7 @@ namespace svc_ai_vision_adapter.Application.Services
                 Metrics: result.InvocationMetrics,
                 Results: _opt.IncludeRaw ? result.Results.ToList() : new List<ProviderResultDto>(),
                 CorrelationId: request.CorrelationId,
-                ObjectKeys: request.ObjectKeys,
+                ObjectKey: request.ObjectKey,
                 Compact: compact,
                 Aggregate: aggregate
                 );
@@ -103,13 +100,13 @@ namespace svc_ai_vision_adapter.Application.Services
 
                 //adding providerInfo
                 var provider = new AIProviderDto(
-                    Name: _reasoningProviderInfo.Name,           // fx "gemini"
-                    ApiVersion: _reasoningProviderInfo.Model,    // fx "gemini-1.5-pro"
+                    Name: _reasoningProviderInfo.Name,           
+                    ApiVersion: _reasoningProviderInfo.Model,   
                     Featureset: new List<string> { "machine_reasoning" },
                     MaxResults: null
                 );
 
-                // Opdater AI metadata med reasoning information
+                // update AI metadata with reasoning information
                 response = response with
                 {
                     Aggregate = refined,

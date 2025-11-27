@@ -8,6 +8,7 @@ using svc_ai_vision_adapter.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text.Json;
+using svc_ai_vision_adapter.Application.Transport;
 
 namespace svc_vision_adapter_tests.Application.RecognitionServiceTest;
 
@@ -68,8 +69,7 @@ public class ImageFetching
 
         //Two images represented as object keys
         var messageKey = new MessageKey(
-            new List<string> { "img-001", "img-002" },
-            CorrelationId: "corr-001");
+            "img-001", "corr-001");
 
         // ACT
         await service.AnalyzeAsync(messageKey, CancellationToken.None);
@@ -78,6 +78,6 @@ public class ImageFetching
         fetcher.Verify(f => f.FetchAsync(
             It.IsAny<ImageRefDto>(),
             It.IsAny<CancellationToken>()),
-            Times.Exactly(2)); // expect 2 calls (for 2 images)
+            Times.Exactly(1)); // expect 1 call (for 1 image)
     }
 }

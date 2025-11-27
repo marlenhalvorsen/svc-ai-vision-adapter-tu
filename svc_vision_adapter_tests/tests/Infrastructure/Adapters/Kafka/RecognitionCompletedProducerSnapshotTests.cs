@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Transport;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
@@ -51,7 +52,7 @@ public class RecognitionCompletedKafkaProducerTests
             Metrics: new InvocationMetricsDto(100, 1, null),
             Results: new List<ProviderResultDto>(),
             CorrelationId: "corr-123",
-            ObjectKeys: new List<string> { "obj-001" },
+            ObjectKey: "obj-001",
             Compact: null,
             Aggregate: new MachineAggregateDto
             {

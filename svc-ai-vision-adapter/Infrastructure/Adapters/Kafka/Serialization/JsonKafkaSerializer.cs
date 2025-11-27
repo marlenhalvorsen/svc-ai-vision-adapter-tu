@@ -20,8 +20,13 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization
         };
         public T Deserialize<T>(byte[] data)
         {
-            //converst raw bytes to T using Json
-            return JsonSerializer.Deserialize<T>(data, _options);
+            //converts raw bytes to T using Json
+            var result = JsonSerializer.Deserialize<T>(data, _options);
+            if (result is null)
+            {
+                throw new InvalidOperationException("Kafka deserialization returned null.");
+            }
+            return result;
         }
 
         public byte[] Serialize<T>(T message)

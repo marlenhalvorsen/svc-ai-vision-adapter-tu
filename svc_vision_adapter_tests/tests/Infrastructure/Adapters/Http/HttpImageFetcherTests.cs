@@ -1,7 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
-using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Transport;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Http;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Http.Models;
 using System.Net;
