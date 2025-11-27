@@ -3,12 +3,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using svc_ai_vision_adapter.Application.Contracts.Transport;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 using System.Text.Json;
+using svc_ai_vision_adapter.Application.Transport;
 
 namespace svc_ai_vision_adapter_tests;
 

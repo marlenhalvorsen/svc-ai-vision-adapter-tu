@@ -1,4 +1,6 @@
 ﻿using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Models;
+using svc_ai_vision_adapter.Application.Transport;
 using System.Text.RegularExpressions;
 
 namespace svc_ai_vision_adapter.Application.Services.Aggregation

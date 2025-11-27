@@ -1,5 +1,4 @@
-﻿
-namespace svc_ai_vision_adapter.Application.Contracts.Transport
+﻿namespace svc_ai_vision_adapter.Application.Transport
 {
     /// <summary>
     /// Internal application-layer DTO representing an incoming recognition request.

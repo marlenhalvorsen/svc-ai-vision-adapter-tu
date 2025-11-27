@@ -1,5 +1,5 @@
-﻿using svc_ai_vision_adapter.Application.Contracts.Transport;
-using svc_ai_vision_adapter.Application.Models;
+﻿using svc_ai_vision_adapter.Application.Models;
+using svc_ai_vision_adapter.Application.Transport;
 
 namespace svc_ai_vision_adapter.Application.Ports.Outbound
 {

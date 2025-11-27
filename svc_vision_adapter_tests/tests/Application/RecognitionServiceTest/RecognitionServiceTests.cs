@@ -8,7 +8,7 @@ using svc_ai_vision_adapter.Application.Services.Aggregation;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_vision_adapter_tests.Fakes;
-using svc_ai_vision_adapter.Application.Contracts.Transport;
+using svc_ai_vision_adapter.Application.Transport;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Parsing;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Resolvers;
 

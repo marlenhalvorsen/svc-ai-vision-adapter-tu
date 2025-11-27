@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using svc_ai_vision_adapter.Application.Contracts.Transport;
+using svc_ai_vision_adapter.Application.Transport;
 
 // This interface is an "input port" for the application layer.
 // It represents an operation the application can perform

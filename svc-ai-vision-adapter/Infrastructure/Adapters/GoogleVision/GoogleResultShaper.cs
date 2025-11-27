@@ -8,6 +8,8 @@ using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Parsing;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Resolvers;
+using svc_ai_vision_adapter.Application.Models;
+using svc_ai_vision_adapter.Application.Transport;
 
 namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 {

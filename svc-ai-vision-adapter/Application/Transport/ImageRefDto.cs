@@ -1,4 +1,4 @@
-﻿namespace svc_ai_vision_adapter.Application.Contracts.Transport
+﻿namespace svc_ai_vision_adapter.Application.Transport
 {
     /// <summary>
     /// Reference to an image stored in object storage.
