@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Contracts.Transport;
 using svc_ai_vision_adapter.Application.Ports.Inbound;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 

@@ -8,6 +8,7 @@ using svc_ai_vision_adapter.Infrastructure.Options;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using svc_ai_vision_adapter.Application.Contracts.Transport;
 
 namespace svc_vision_adapter_tests.Application.RecognitionServiceTest;
 
@@ -97,8 +98,7 @@ public class ShapingAndAggregating
         return new ShapedResultDto(
             new ImageRefDto(id),
             Machine: null,
-            Evidence: null,
-            Objects: Array.Empty<ObjectHitDto>()
+            Evidence: null
         );
     }
 }

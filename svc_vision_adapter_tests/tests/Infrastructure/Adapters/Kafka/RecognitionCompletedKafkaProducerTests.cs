@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using svc_ai_vision_adapter.Application.Contracts.Transport;
 using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
@@ -68,8 +69,7 @@ public class RecognitionCompletedKafkaProducerTests
             new(
                 new("img-001"),
                 new("Siemens", "CNC-Mill", "X200", 0.9, true),
-                new("Dumper", "Hitatchi", "DUMP", null, null, null),
-                Array.Empty<ObjectHitDto>())
+                new("Dumper", "Hitatchi", "DUMP", null, null))
             },
             Aggregate: new()
             {

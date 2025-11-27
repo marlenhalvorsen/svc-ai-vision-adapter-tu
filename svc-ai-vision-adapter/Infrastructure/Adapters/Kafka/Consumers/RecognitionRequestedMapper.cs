@@ -1,4 +1,4 @@
-﻿using svc_ai_vision_adapter.Application.Contracts;
+﻿using svc_ai_vision_adapter.Application.Contracts.Transport;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models;
 
 ///using a mapper to keep applicationlayer kafka agnostic

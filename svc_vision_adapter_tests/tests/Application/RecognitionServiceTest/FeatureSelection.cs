@@ -9,6 +9,7 @@ using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using svc_ai_vision_adapter.Application.Services;
 using svc_ai_vision_adapter.Application.Models;
+using svc_ai_vision_adapter.Application.Contracts.Transport;
 
 
 namespace svc_vision_adapter_tests.Application.RecognitionServiceTest;

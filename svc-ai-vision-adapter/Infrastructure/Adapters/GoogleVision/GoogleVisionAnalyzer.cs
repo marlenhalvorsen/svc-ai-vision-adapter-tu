@@ -2,6 +2,7 @@
 using Google.Protobuf;
 using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Contracts;
+using svc_ai_vision_adapter.Application.Contracts.Transport;
 using svc_ai_vision_adapter.Application.Models;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
 using svc_ai_vision_adapter.Infrastructure.Options;

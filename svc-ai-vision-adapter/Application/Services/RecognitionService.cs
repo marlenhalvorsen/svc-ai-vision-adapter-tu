@@ -6,6 +6,7 @@ using svc_ai_vision_adapter.Application.Services.Shaping;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
+using svc_ai_vision_adapter.Application.Contracts.Transport;
 
 namespace svc_ai_vision_adapter.Application.Services
 {

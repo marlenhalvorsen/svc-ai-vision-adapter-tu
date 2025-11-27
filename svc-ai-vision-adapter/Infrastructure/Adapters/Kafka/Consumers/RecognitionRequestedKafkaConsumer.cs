@@ -9,6 +9,7 @@ using svc_ai_vision_adapter.Application.Ports.Inbound;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
 using Microsoft.Extensions.DependencyInjection;
+using svc_ai_vision_adapter.Application.Contracts.Transport;
 using System.Linq;
 
 using svc_ai_vision_adapter.Infrastructure.Options;

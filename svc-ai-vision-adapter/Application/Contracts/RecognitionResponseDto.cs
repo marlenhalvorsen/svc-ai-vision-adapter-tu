@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using svc_ai_vision_adapter.Application.Contracts.Transport;
+using System.Text.Json;
 
 namespace svc_ai_vision_adapter.Application.Contracts
 {
@@ -52,13 +53,7 @@ namespace svc_ai_vision_adapter.Application.Contracts
         string? Logo,
         string? OcrSample,
         IReadOnlyList<WebEntityHitDto>? WebEntities,
-        IReadOnlyList<ObjectHitDto>? Objects,
         IReadOnlyList<LogoHitDto>? LogoCandidates
-    );
-
-    public sealed record ObjectHitDto(
-        string Name,
-        double Score
     );
 
     public sealed record WebEntityHitDto(
@@ -91,8 +86,7 @@ namespace svc_ai_vision_adapter.Application.Contracts
     public sealed record ShapedResultDto(
         ImageRefDto ImageRef,
         MachineSummaryDto Machine,
-        EvidenceDto Evidence,
-        IReadOnlyList<ObjectHitDto> Objects
+        EvidenceDto Evidence
     );
     public sealed record RecognitionResponseDto(
         AIProviderDto Ai,

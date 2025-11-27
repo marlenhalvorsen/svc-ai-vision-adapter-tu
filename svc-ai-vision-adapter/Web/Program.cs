@@ -17,6 +17,8 @@ using Microsoft.Extensions.Options;
 using Google.Api;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleGemini.Prompt;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Parsing;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Resolvers;
 
 
 
@@ -69,8 +71,11 @@ builder.Services.AddSingleton<IMachineReasoningAnalyzer, GeminiMachineAnalyzer>(
 builder.Services.AddSingleton<IPromptLoader, GeminiPromptLoader>();
 builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+builder.Services.AddTransient<GoogleVisionParser>();
+builder.Services.AddTransient<BrandResolver>();
+builder.Services.AddTransient<TypeResolver>();
 builder.Services.AddSingleton<IResultShaperFactory, ResultShaperFactory>();
-builder.Services.AddSingleton<IResultShaper, GoogleResultShaper>();
+builder.Services.AddScoped<IResultShaper, GoogleResultShaper>();
 builder.Services.AddSingleton<IBrandCatalog>(sp =>
     new JsonBrandCatalog(Path.Combine(AppContext.BaseDirectory, "Infrastructure", "Resources", "brands.json")));
 builder.Services.AddSingleton<IResultAggregator, ResultAggregatorService>();
