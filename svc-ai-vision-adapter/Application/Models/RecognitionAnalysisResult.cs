@@ -3,6 +3,9 @@ using svc_ai_vision_adapter.Application.Transport;
 
 namespace svc_ai_vision_adapter.Application.Models
 {
+    /// <summary>
+    /// represents internal model of the returned payload from Google Visions analysis.
+    /// </summary>
     public sealed record RecognitionAnalysisResult
     {
         public AIProviderDto Provider { get; init; } = default!;

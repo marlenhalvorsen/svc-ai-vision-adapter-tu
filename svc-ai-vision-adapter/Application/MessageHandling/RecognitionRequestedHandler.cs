@@ -9,7 +9,7 @@ using svc_ai_vision_adapter.Application.Transport;
 // Responsibilities:
 // 1. Call the RecognitionService to perform the actual analysis work
 // 2. Take the RecognitionResponseDto result
-// 3. Publish an outgoing "RecognitionCompleted" event via IRecognitionCompletedPublisher
+// 3. Send RecognitionResponse via IRecognitionCompletedPublisher to be published as tu.recognition.completed event
 namespace svc_ai_vision_adapter.Application.MessageHandling
 {
     internal sealed class RecognitionRequestedHandler : IRecognitionRequestedHandler

@@ -1,6 +1,8 @@
 ﻿namespace svc_ai_vision_adapter.Application.Contracts
 {
-
+    /// <summary>
+    /// part of payload that is posted in Kafka event. 
+    /// </summary>
     public sealed record MachineAggregateDto
     {
         public string? Brand { get; init; }
