@@ -17,8 +17,8 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
     [TestClass]
     public class RecognitionServiceTests
     {
-        private RecognitionService _sut;
-        private Mock<IMachineReasoningAnalyzer> _fakeReasoner;
+        private RecognitionService? _sut;
+        private Mock<IMachineReasoningAnalyzer>? _fakeReasoner;
 
 
         [TestInitialize]
@@ -79,12 +79,12 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
         {
             // Arrange
             var messageKey = new MessageKey(
-                new List<string> { "images/2025/11/02/img.jpg" },
+                "images/2025/11/02/img.jpg",
                 CorrelationId: "corr-123"
             );
 
             // Act
-            var result = await _sut.AnalyzeAsync(messageKey);
+            var result = await _sut!.AnalyzeAsync(messageKey);
 
             // Assert
             Assert.IsNotNull(result);

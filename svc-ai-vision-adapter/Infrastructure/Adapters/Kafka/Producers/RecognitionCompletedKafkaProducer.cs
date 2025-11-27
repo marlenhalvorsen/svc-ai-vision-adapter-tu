@@ -51,7 +51,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers
                 //build kafka message with key and value for _producer
                 var message = new Message<string, byte[]>
                 {
-                    Key = response.ObjectKeys.FirstOrDefault(),
+                    Key = response.ObjectKey,
                     Value = payload,
                     Headers = headers
                 };

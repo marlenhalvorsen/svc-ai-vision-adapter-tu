@@ -7,14 +7,14 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Resolvers
     public class BrandResolver
     {
         public (string? resolvedBrand, double brandScore) ResolveBrand(
-            string logo,
+            string? logo,
             double logoScore,
-            IReadOnlyList<WebEntityHitDto> webEntities,
+            IReadOnlyList<WebEntityHitDto>? webEntities,
             IBrandCatalog brands,
-            string bestGuess, 
+            string? bestGuess, 
             string? ocrText)
         {
-            string? resolvedBrand = null;
+            string resolvedBrand = string.Empty;
             double brandScore = 0;
             if (!string.IsNullOrWhiteSpace(logo))
             {
@@ -37,17 +37,17 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Resolvers
                         desc.Contains(b, StringComparison.OrdinalIgnoreCase));
 
 
-                        if (!containsBrand)
+                        if (!string.IsNullOrWhiteSpace(desc) && !containsBrand)
                             typeStop.Add(desc);
                     }
                 if (!string.IsNullOrWhiteSpace(bestGuess))
                 {
-                    var best = bestGuess?.Trim();
+                    var best = bestGuess.Trim();
 
                     bool containsBrand = brands.All.Any(b =>
                     best.Contains(b, StringComparison.OrdinalIgnoreCase));
 
-                    if (!containsBrand)
+                    if (!string.IsNullOrWhiteSpace(best) && !containsBrand)
                         typeStop.Add(best);
                 }
 

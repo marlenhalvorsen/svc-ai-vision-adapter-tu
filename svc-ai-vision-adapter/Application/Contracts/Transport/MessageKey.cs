@@ -4,7 +4,7 @@
     /// MessageKey represent the internal values used from the kafkaEvent. 
     /// </summary>
     public record MessageKey(
-        IReadOnlyList<string> ObjectKeys,
+        string ObjectKey,
         string? CorrelationId = null
         );
 }

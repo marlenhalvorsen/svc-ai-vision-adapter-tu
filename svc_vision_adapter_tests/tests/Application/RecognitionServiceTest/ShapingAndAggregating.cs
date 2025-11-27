@@ -82,8 +82,8 @@ public class ShapingAndAggregating
 
         // MessageKey now represents event with multiple images
         var key = new MessageKey(
-            new List<string> { "img-001", "img-002" },
-            CorrelationId: "corr-001");
+            "img-001",
+            "corr-001");
 
         // ACT
         var response = await service.AnalyzeAsync(key, CancellationToken.None);
@@ -97,8 +97,14 @@ public class ShapingAndAggregating
     {
         return new ShapedResultDto(
             new ImageRefDto(id),
-            Machine: null,
-            Evidence: null
+            Machine: DummySummary(),
+            Evidence: DummyEvidence()
         );
     }
+    private static MachineSummaryDto DummySummary() =>
+    new MachineSummaryDto(null, null, null, 0, false);
+
+    private static EvidenceDto DummyEvidence() =>
+        new EvidenceDto(null, null, null, null, null);
+
 }

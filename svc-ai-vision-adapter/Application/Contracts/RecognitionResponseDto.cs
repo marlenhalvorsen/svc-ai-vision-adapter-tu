@@ -80,7 +80,7 @@ namespace svc_ai_vision_adapter.Application.Contracts
         
         public string Name => string.Join(", ", new[] { Brand, MachineType, Model  }
                 .Where(s => !string.IsNullOrWhiteSpace(s))
-                .Select(s => s.Trim()));
+                .Select(s => s!.Trim()));
     }
 
     public sealed record ShapedResultDto(
@@ -93,7 +93,7 @@ namespace svc_ai_vision_adapter.Application.Contracts
         InvocationMetricsDto Metrics,
         List<ProviderResultDto> Results,
         string? CorrelationId,
-        IReadOnlyList<string> ObjectKeys,
+        string ObjectKey,
         List<ShapedResultDto>? Compact = null,
         MachineAggregateDto? Aggregate = null
         );

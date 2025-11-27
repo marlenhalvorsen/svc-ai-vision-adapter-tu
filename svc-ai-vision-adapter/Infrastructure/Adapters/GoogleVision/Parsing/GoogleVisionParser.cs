@@ -27,7 +27,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Parsing
 
 
         //parseWeb
-        public (IReadOnlyList<WebEntityHitDto> entities, double topScore, string bestGuess) GetWebEntities(
+        public (IReadOnlyList<WebEntityHitDto>? entities, double topScore, string? bestGuess) GetWebEntities(
             JsonElement resp, 
             int recognitionOptions)
         {
@@ -79,13 +79,13 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Parsing
             return (webEntities, topWebScore, bestGuess);
         }
         //parselogo
-        public (IReadOnlyList<LogoHitDto> logoCandidates, string logo, double logoScore) GetLogoHits(
+        public (IReadOnlyList<LogoHitDto>? logoCandidates, string? logo, double logoScore) GetLogoHits(
             JsonElement resp,
             int recognitionOptions)
         {
             // Logo, provides a textual description of the entity identified,
             // a confidence score, and a bounding polygon for the logo in the file.
-            string? logo = null;
+            string? logo = string.Empty;
             double logoscore = 0;
             IReadOnlyList<LogoHitDto> logoCandidates = Array.Empty<LogoHitDto>();
 
@@ -129,7 +129,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Parsing
             return (logoCandidates, logo, logoscore);
         }
         //parseocr
-        public string GetOcrHits(JsonElement resp)
+        public string? GetOcrHits(JsonElement resp)
         {
             //first try textAnnotation
             if(resp.TryGetProperty("textAnnotations", out var ta) 

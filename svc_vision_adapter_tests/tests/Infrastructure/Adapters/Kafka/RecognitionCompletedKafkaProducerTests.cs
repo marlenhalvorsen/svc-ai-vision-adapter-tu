@@ -63,7 +63,7 @@ public class RecognitionCompletedKafkaProducerTests
             )
             },
             CorrelationId: "abc123",
-            ObjectKeys: new List<string> { "img-001" },  
+            ObjectKey: "img-001",  
             Compact: new List<ShapedResultDto>
             {
             new(

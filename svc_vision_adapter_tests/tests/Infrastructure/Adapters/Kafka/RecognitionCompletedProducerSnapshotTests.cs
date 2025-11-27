@@ -51,7 +51,7 @@ public class RecognitionCompletedKafkaProducerTests
             Metrics: new InvocationMetricsDto(100, 1, null),
             Results: new List<ProviderResultDto>(),
             CorrelationId: "corr-123",
-            ObjectKeys: new List<string> { "obj-001" },
+            ObjectKey: "obj-001",
             Compact: null,
             Aggregate: new MachineAggregateDto
             {

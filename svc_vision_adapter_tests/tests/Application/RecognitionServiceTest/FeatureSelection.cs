@@ -8,7 +8,6 @@ using svc_ai_vision_adapter.Infrastructure.Options;
 using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using svc_ai_vision_adapter.Application.Services;
-using svc_ai_vision_adapter.Application.Models;
 using svc_ai_vision_adapter.Application.Contracts.Transport;
 
 
@@ -43,7 +42,7 @@ public class FeatureSelection
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new RecognitionAnalysisResult
             {
-                Provider = new AIProviderDto("Google Vision", null, null, null),
+                Provider = new AIProviderDto("Google Vision", null, Array.Empty<string>(), null, null),
                 InvocationMetrics = new InvocationMetricsDto(0, 1, "123"),
                 Results = new List<ProviderResultDto>
                 {
@@ -63,7 +62,7 @@ public class FeatureSelection
             machineReasoner,
             providerInfo);
 
-        var messageKey = new MessageKey(new List<string> { "img-001" }, "corr-123");
+        var messageKey = new MessageKey ("img-001", "corr-123" );
 
         // ACT
         await service.AnalyzeAsync(messageKey, CancellationToken.None);

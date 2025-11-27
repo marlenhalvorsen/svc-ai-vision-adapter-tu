@@ -15,7 +15,7 @@ namespace tests.Infrastructure.Adapters.VisionAdapterTest
     [TestClass]
     public class GoogleResultShaperSmokeTests
     {
-        public TestContext TestContext { get; set; }
+        public TestContext? TestContext { get; set; }
 
         [TestMethod]
         public void Dump_from_fixture()
@@ -53,7 +53,7 @@ namespace tests.Infrastructure.Adapters.VisionAdapterTest
             var pretty = JsonSerializer.Serialize(new { shaped, aggregate }, new JsonSerializerOptions { WriteIndented = true });
 
             // OUTPUT
-            TestContext.WriteLine(pretty);
+            TestContext?.WriteLine(pretty);
         }
 
         private class MockBrandCatalog : IBrandCatalog

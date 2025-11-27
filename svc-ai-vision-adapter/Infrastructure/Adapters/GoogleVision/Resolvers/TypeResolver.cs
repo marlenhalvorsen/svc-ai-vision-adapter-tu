@@ -10,9 +10,9 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Resolvers
         {
             _brands = brandCatalog;
         }
-        public string? ResolveType(string? bestGuess, IReadOnlyList<WebEntityHitDto> webEntities, IBrandCatalog brandCatalog)
+        public string? ResolveType(string? bestGuess, IReadOnlyList<WebEntityHitDto>? webEntities, IBrandCatalog brandCatalog)
         {
-            if (String.IsNullOrWhiteSpace(bestGuess))
+            if (!String.IsNullOrWhiteSpace(bestGuess))
             {
                 var cleaned = bestGuess.Trim();
 
