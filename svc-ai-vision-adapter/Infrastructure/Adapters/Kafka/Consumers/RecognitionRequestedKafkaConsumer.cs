@@ -1,15 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Confluent.Kafka;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Confluent.Kafka;
 using Microsoft.Extensions.Options;
 using svc_ai_vision_adapter.Application.Ports.Inbound;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Models;
 using svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Serialization;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
 
 using svc_ai_vision_adapter.Infrastructure.Options;
 // This class is the Kafka consumer adapter.

@@ -16,8 +16,8 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
     [TestClass]
     public class GeminiMachineAnalyzerTests
     {
-        private Mock<IPromptLoader> _promptMock;
-        private GeminiOptions _opt;
+        private Mock<IPromptLoader>? _promptMock;
+        private GeminiOptions? _opt;
 
         [TestInitialize]
         public void Init()
@@ -58,7 +58,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
         public async Task AnalyzeAsync_SendsCorrectHttpRequest()
         {
             // ARRANGE
-            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+            _promptMock!.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
                        .Returns("PROMPT_TEXT");
 
             var httpResponse = new HttpResponseMessage(HttpStatusCode.OK)
@@ -78,7 +78,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
 
             var analyzer = new GeminiMachineAnalyzer(
                 http,
-                Options.Create(_opt),
+                Options.Create(_opt!),
                 _promptMock.Object
             );
 
@@ -101,7 +101,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
         public async Task AnalyzeAsync_ParsesGeminiResponseCorrectly()
         {
             // ARRANGE
-            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+            _promptMock!.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
                        .Returns("PROMPT");
 
             var responseJson = """
@@ -121,7 +121,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
 
             var analyzer = new GeminiMachineAnalyzer(
                 http,
-                Options.Create(_opt),
+                Options.Create(_opt!),
                 _promptMock.Object
             );
 
@@ -140,7 +140,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
         public async Task AnalyzeAsync_ThrowsIfResponseIsEmpty()
         {
             // ARRANGE
-            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+            _promptMock!.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
                        .Returns("PROMPT");
 
             var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK)
@@ -150,7 +150,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
 
             var analyzer = new GeminiMachineAnalyzer(
                 http,
-                Options.Create(_opt),
+                Options.Create(_opt!),
                 _promptMock.Object
             );
 
@@ -165,7 +165,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
         public async Task AnalyzeAsync_ThrowsIfTextPartMissing()
         {
             // ARRANGE
-            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+            _promptMock!.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
                        .Returns("PROMPT");
 
             var invalidJson = """
@@ -185,7 +185,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
 
             var analyzer = new GeminiMachineAnalyzer(
                 http,
-                Options.Create(_opt),
+                Options.Create(_opt!),
                 _promptMock.Object
             );
 
@@ -209,7 +209,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
                 SchemaPath = tempPath
             };
 
-            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+            _promptMock!.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
                        .Returns("PROMPT");
 
             var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK)
@@ -250,7 +250,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
                 SchemaPath = "THIS_FILE_DOES_NOT_EXIST.json"
             };
 
-            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+            _promptMock!.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
                        .Returns("PROMPT");
 
             var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK));
@@ -273,7 +273,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
         public async Task AnalyzeAsync_MapsRefusalCorrectly()
         {
             // ARRANGE
-            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+            _promptMock!.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
                        .Returns("PROMPT");
 
             var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK)
@@ -293,7 +293,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
 
             var analyzer = new GeminiMachineAnalyzer(
                 http,
-                Options.Create(_opt),
+                Options.Create(_opt!),
                 _promptMock.Object
             );
 
@@ -313,7 +313,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
         public async Task AnalyzeAsync_ThrowsIfCandidatesMissing()
         {
             // ARRANGE
-            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+            _promptMock!.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
                        .Returns("PROMPT");
 
             //empty json output from Gemini
@@ -324,7 +324,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
 
             var analyzer = new GeminiMachineAnalyzer(
                 http,
-                Options.Create(_opt),
+                Options.Create(_opt!),
                 _promptMock.Object
             );
 
@@ -336,7 +336,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
         public async Task AnalyzeAsync_ThrowsIfPartsArrayEmpty()
         {
             // ARRANGE
-            _promptMock.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
+            _promptMock!.Setup(x => x.BuildPrompt(It.IsAny<MachineAggregateDto>()))
                        .Returns("PROMPT");
 
             var http = CreateHttpClient(new HttpResponseMessage(HttpStatusCode.OK)
@@ -352,7 +352,7 @@ namespace svc_vision_adapter_tests.tests.Infrastructure.Adapters.GeminiAdapterTe
 
             var analyzer = new GeminiMachineAnalyzer(
                 http,
-                Options.Create(_opt),
+                Options.Create(_opt!),
                 _promptMock.Object
             );
 

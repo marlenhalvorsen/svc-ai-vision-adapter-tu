@@ -1,15 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using svc_ai_vision_adapter.Application.Contracts;
 using svc_ai_vision_adapter.Application.Ports.Inbound;
 using svc_ai_vision_adapter.Application.Ports.Outbound;
+using svc_ai_vision_adapter.Application.Transport;
 
 // This handler is the entry point for asynchronous "RecognitionRequested" work.
 // It is called by Infrastructure (Kafka consumer) whenever a new request comes in.
 // Responsibilities:
 // 1. Call the RecognitionService to perform the actual analysis work
 // 2. Take the RecognitionResponseDto result
-// 3. Publish an outgoing "RecognitionCompleted" event via IRecognitionCompletedPublisher
+// 3. Send RecognitionResponse via IRecognitionCompletedPublisher to be published as tu.recognition.completed event
 namespace svc_ai_vision_adapter.Application.MessageHandling
 {
     internal sealed class RecognitionRequestedHandler : IRecognitionRequestedHandler

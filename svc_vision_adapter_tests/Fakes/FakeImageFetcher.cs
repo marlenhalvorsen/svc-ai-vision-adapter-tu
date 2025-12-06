@@ -1,5 +1,5 @@
-﻿using svc_ai_vision_adapter.Application.Contracts;
-using svc_ai_vision_adapter.Application.Ports.Outbound;
+﻿using svc_ai_vision_adapter.Application.Ports.Outbound;
+using svc_ai_vision_adapter.Application.Transport;
 /// <summary>
 /// Fake implementation of <see cref="IImageFetcher"/> that returns predefined byte arrays instead of fetching real images.
 /// Used to simulate image download from presigned URLs during service-level testing.

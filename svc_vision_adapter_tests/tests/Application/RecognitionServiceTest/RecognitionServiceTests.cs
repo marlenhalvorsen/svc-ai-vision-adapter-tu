@@ -8,14 +8,17 @@ using svc_ai_vision_adapter.Application.Services.Aggregation;
 using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision;
 using svc_ai_vision_adapter.Infrastructure.Options;
 using svc_vision_adapter_tests.Fakes;
+using svc_ai_vision_adapter.Application.Transport;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Parsing;
+using svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision.Resolvers;
 
 namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
 {
     [TestClass]
     public class RecognitionServiceTests
     {
-        private RecognitionService _sut;
-        private Mock<IMachineReasoningAnalyzer> _fakeReasoner;
+        private RecognitionService? _sut;
+        private Mock<IMachineReasoningAnalyzer>? _fakeReasoner;
 
 
         [TestInitialize]
@@ -25,6 +28,13 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
             var fakeFetcher = new FakeImageFetcher();
             var fakeAnalyzer = new FakeImageAnalyzer();
             var providerInfo = Mock.Of<IReasoningProviderInfo>();
+            var parser = new GoogleVisionParser();
+            var brandResolver = new BrandResolver();
+
+            var fakeBrandCatalog = new FakeBrandCatalog(new[] { "Hitachi", "Volvo", "CAT", "Caterpillar" });
+
+            var typeResolver = new TypeResolver(fakeBrandCatalog);
+
 
             var options = Options.Create(new RecognitionOptions
             {
@@ -33,8 +43,7 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
                 Features = new List<string> { "LOGO_DETECTION" }
             });
 
-            var fakeBrandCatalog = new FakeBrandCatalog(new[] { "Hitachi", "Volvo", "CAT", "Caterpillar" });
-            var shaper = new GoogleResultShaper(options, fakeBrandCatalog);
+            var shaper = new GoogleResultShaper(options, fakeBrandCatalog, parser, brandResolver, typeResolver);
             var aggregator = new ResultAggregatorService(0.70);
 
             // MOCK Gemini machine reasoning analyzer as this calls external API
@@ -70,12 +79,12 @@ namespace svc_vision_adapter_tests.tests.Application.RecognitionServiceTest
         {
             // Arrange
             var messageKey = new MessageKey(
-                new List<string> { "images/2025/11/02/img.jpg" },
+                "images/2025/11/02/img.jpg",
                 CorrelationId: "corr-123"
             );
 
             // Act
-            var result = await _sut.AnalyzeAsync(messageKey);
+            var result = await _sut!.AnalyzeAsync(messageKey);
 
             // Assert
             Assert.IsNotNull(result);
