@@ -1,5 +1,5 @@
 # Trackunit AI Vision Adapter
-![CI](https://github.com/Team-2-Devs/svc-ai-vision-adapter/actions/workflows/ci.yml/badge.svg?branch=Development)
+[![CI](https://github.com/marlenhalvorsen/marlenhalvorsen/actions/workflows/ci.yml/badge.svg)](https://github.com/marlenhalvorsen/marlenhalvorsen/actions/workflows/ci.yml)
 
 ## Status
 Active development – PoC phase for AI-driven machine recognition.
