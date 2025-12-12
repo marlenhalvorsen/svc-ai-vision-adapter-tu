@@ -98,6 +98,17 @@ This allows traceabilitu of which LLM was used to enrich the classification.
 
 ---
 
+## Failure Semantics
+
+This event is emitted only on successful completion of the recognition pipeline.
+
+If a failure occurs before aggregation (e.g. image fetch failure, Vision API failure),
+no RecognitionCompleted event is emitted.
+
+If optional LLM reasoning fails, the event is still emitted, but without reasoning metadata.
+
+---
+
 ## Versioning Policy
 - v0: freely changeable during development.
 - v1 (frozen): once stabilized, breaking changes require new schema (`recognition.completed.v2`).
