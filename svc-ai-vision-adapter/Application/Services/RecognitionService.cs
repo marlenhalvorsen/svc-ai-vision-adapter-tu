@@ -96,32 +96,41 @@ namespace svc_ai_vision_adapter.Application.Services
             //enable machineReasoning if true in appsettings
             if (_opt.EnableReasoning)
             {
-                var refined = await _machineReasoning.AnalyzeAsync(aggregate, ct);
-
-                //adding providerInfo
-                var provider = new AIProviderDto(
-                    Name: _reasoningProviderInfo.Name,           
-                    ApiVersion: _reasoningProviderInfo.Model,   
-                    Featureset: new List<string> { "machine_reasoning" },
-                    MaxResults: null
-                );
-
-                // update AI metadata with reasoning information
-                response = response with
+                try
                 {
-                    Aggregate = refined,
-                    Ai = response.Ai with
+                    var refined = await _machineReasoning.AnalyzeAsync(aggregate, ct);
+
+                    var provider = new AIProviderDto(
+                        Name: _reasoningProviderInfo.Name,
+                        ApiVersion: _reasoningProviderInfo.Model,
+                        Featureset: new List<string> { "machine_reasoning" },
+                        MaxResults: null
+                    );
+
+                    response = response with
                     {
-                        ReasoningName = provider.Name,
-                        ReasoningModel = provider.ApiVersion
-                    }
-                };
-
-                return response;
+                        Aggregate = refined,
+                        Ai = response.Ai with
+                        {
+                            ReasoningName = provider.Name,
+                            ReasoningModel = provider.ApiVersion
+                        }
+                    };
+                }
+                catch
+                {
+                    response = response with
+                    {
+                        Aggregate = aggregate,
+                        Ai = response.Ai with
+                        {
+                            ReasoningName = null,
+                            ReasoningModel = null
+                        }
+                    };
+                }
             }
-
             return response;
-
         }
     }
 }
