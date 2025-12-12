@@ -3,7 +3,8 @@
 [![Test Coverage](https://github.com/marlenhalvorsen/svc-ai-vision-adapter-tu/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/marlenhalvorsen/svc-ai-vision-adapter-tu/actions/workflows/test-coverage.yml)
 
 ## Status
-Active development – PoC phase for AI-driven machine recognition.
+v1 is currently frozen.
+Any future enhancements or architectural changes will be delivered as part of a potential v2.
 
 ---
 
