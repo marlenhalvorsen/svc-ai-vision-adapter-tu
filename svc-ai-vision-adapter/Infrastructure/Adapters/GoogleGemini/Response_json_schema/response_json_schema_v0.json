@@ -1,6 +1,5 @@
-
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  //"$schema": "https://json-schema.org/draft/2020-12/schema", //warning as Gemini SDK update does not allow $schema. 
   "$id": "https://raw.githubusercontent.com/maha63312/svc-ai-vision-adapter/main/Infrastructure/Adapters/GoogleGemini/response_json_schema_v0.json",
   "title": "MachineIdentification",
   "type": "object",

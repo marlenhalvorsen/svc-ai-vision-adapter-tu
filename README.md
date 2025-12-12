@@ -1,5 +1,6 @@
 # Trackunit AI Vision Adapter
 [![CI](https://github.com/marlenhalvorsen/svc-ai-vision-adapter-tu/actions/workflows/ci.yml/badge.svg)](https://github.com/marlenhalvorsen/svc-ai-vision-adapter-tu/actions/workflows/ci.yml)
+[![Test Coverage](https://github.com/marlenhalvorsen/svc-ai-vision-adapter-tu/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/marlenhalvorsen/svc-ai-vision-adapter-tu/actions/workflows/test-coverage.yml)
 
 ## Status
 v1 is currently frozen.

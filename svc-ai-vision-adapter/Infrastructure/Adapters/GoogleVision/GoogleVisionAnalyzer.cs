@@ -12,16 +12,14 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
 {
     internal sealed class GoogleVisionAnalyzer : IImageAnalyzer
     {
-        private readonly ImageAnnotatorClient _imageAnnotatorClient;
+        private readonly IGoogleVisionClient _visionClient;
         private readonly RecognitionOptions _recognitionOptions;
 
 
-        public GoogleVisionAnalyzer(IOptions<RecognitionOptions> opt)
+        public GoogleVisionAnalyzer(IGoogleVisionClient visionClient, IOptions<RecognitionOptions> opt)
         {
             _recognitionOptions = opt.Value;
-            _imageAnnotatorClient = ImageAnnotatorClient.Create();
-
-
+            _visionClient = visionClient;
         }
 
         public async Task<RecognitionAnalysisResult> AnalyzeAsync(
@@ -41,7 +39,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.GoogleVision
             }
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            var resp = await _imageAnnotatorClient.BatchAnnotateImagesAsync(batch, ct);
+            var resp = await _visionClient.BatchAnnotateAsync(batch, ct);
             var latency = (int)sw.Elapsed.TotalMilliseconds;
 
             var jsonFmt = JsonFormatter.Default;
