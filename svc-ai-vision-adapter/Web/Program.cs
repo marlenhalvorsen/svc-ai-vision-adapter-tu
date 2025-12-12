@@ -66,6 +66,7 @@ builder.Services.AddHttpClient<IImageUrlFetcher, HttpImageUrlFetcher>((sp, clien
 
 builder.Services.AddTransient<IImageFetcher, HttpImageFetcher>();
 builder.Services.AddScoped<IImageAnalyzer, GoogleVisionAnalyzer>();
+builder.Services.AddSingleton<IGoogleVisionClient, GoogleVisionClient>();
 builder.Services.AddHttpClient<GeminiMachineAnalyzer>();
 builder.Services.AddSingleton<IMachineReasoningAnalyzer, GeminiMachineAnalyzer>();
 builder.Services.AddSingleton<IPromptLoader, GeminiPromptLoader>();
