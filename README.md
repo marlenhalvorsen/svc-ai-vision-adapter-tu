@@ -7,6 +7,12 @@ Frozen contract, breaking changes would require v2.
 
 ---
 
+## Context and Scope
+
+This contract is part of a proof-of-concept exploring whether AI-based image analysis can reliably classify heavy machinery from images and enrich assets with structured metadata.
+
+---
+
 ## Purpose
 AI Vision Adapter is a microservice responsible for analyzing uploaded images using external AI providers such as Google Vision and Gemini.  
 It consumes `tu.images.uploaded` events, performs image recognition, optionally enriches the result using an LLM, and publishes a `tu.recognition.completed` event.
