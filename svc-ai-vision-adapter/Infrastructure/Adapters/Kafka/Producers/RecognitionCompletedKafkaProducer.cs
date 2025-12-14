@@ -44,7 +44,7 @@ namespace svc_ai_vision_adapter.Infrastructure.Adapters.Kafka.Producers
                 var headers = new Headers
                 {   
                     { "x-correlation-id", Encoding.UTF8.GetBytes(response.CorrelationId ?? Guid.NewGuid().ToString()) },
-                    { "x-schema", Encoding.UTF8.GetBytes("recognition.completed.v0") },
+                    { "x-schema", Encoding.UTF8.GetBytes("recognition.completed.v1") },
                     { "x-producer", Encoding.UTF8.GetBytes("svc-ai-vision-adapter") }
                 };
 
