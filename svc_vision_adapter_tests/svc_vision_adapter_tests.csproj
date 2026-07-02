@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<AssemblyName>svc_vision_adapter_tests</AssemblyName>
+		<IsTestProject>true</IsTestProject>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -16,9 +17,9 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.11.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.11.1" />
 		<PackageReference Include="Moq" Version="4.20.72" />
 		<PackageReference Include="FluentAssertions" Version="6.12.0" />
 	</ItemGroup>
