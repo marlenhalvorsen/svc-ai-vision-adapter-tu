@@ -105,7 +105,7 @@ public class RecognitionCompletedKafkaProducerTests
         Assert.AreEqual("corr-123", Encoding.UTF8.GetString(corrBytes));
 
         Assert.IsTrue(capturedMessage.Headers.TryGetLastBytes("x-schema", out var schemaBytes));
-        Assert.AreEqual("recognition.completed.v0", Encoding.UTF8.GetString(schemaBytes));
+        Assert.AreEqual("recognition.completed.v1", Encoding.UTF8.GetString(schemaBytes));
 
         Assert.IsTrue(capturedMessage.Headers.TryGetLastBytes("x-producer", out var producerBytes));
         Assert.AreEqual("svc-ai-vision-adapter", Encoding.UTF8.GetString(producerBytes));
