@@ -6,6 +6,8 @@
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<IsTestProject>true</IsTestProject>
+		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup>
